@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yatra Sphere — Explore More. Experience Beyond.</title>
+  <meta name="description" content="Yatra Sphere helps you discover curated destinations across Manali, Goa, Jaipur, Kashmir, Kerala, and Meghalaya with thoughtful budget and itinerary planning." />
+  <meta property="og:title" content="Yatra Sphere — Explore More. Experience Beyond." />
+  <meta property="og:description" content="Discover curated destinations across India and build clear, balanced travel itineraries with Yatra Sphere." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Typography: Editorial Display Serif (Cormorant Garamond) + Crisp Geometric Sans (Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="destinations-data.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="supabase-client.js" defer></script>
+  <script src="account-store.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="route-planner.js" defer></script>
+  <script src="assistant.js" defer></script>
+</head>
+<body>
+  <!-- Skip link for keyboard accessibility -->
+  <a class="skip-link" href="#main-content" data-i18n="nav.skip">Skip to main content</a>
+
+  <!-- =========================================================
+       1. NAVIGATION BAR
+       ========================================================= -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <!-- Zone 1: Brand Logo & Wordmark (single clean line) -->
+      <a href="#home" class="brand-logo" aria-label="Yatra Sphere Home">
+        <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+          <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+          <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+        </svg>
+        <span class="brand-text">YATRA SPHERE</span>
+      </a>
+
+      <!-- Zone 2: Desktop Navigation Links -->
+      <nav class="desktop-nav" aria-label="Primary Navigation">
+        <a href="#home" class="nav-link active" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="nav-link" data-i18n="nav.assistant">Assistant</a>
+      </nav>
+
+      <!-- Zone 3: Primary Action & Mobile Toggle -->
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language switch">
+          <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिं</button>
+        </div>
+        <button type="button" class="btn btn-nav-cta" id="open-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+        <button
+          type="button"
+          class="mobile-menu-toggle"
+          id="mobile-menu-toggle"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          aria-label="Toggle navigation menu"
+        >
+          <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Responsive Mobile Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" hidden>
+      <nav class="mobile-nav-list" aria-label="Mobile Navigation">
+        <a href="#home" class="mobile-nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="mobile-nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="mobile-nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="mobile-nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="mobile-nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="mobile-nav-link" data-i18n="nav.assistant">Assistant</a>
+        <a href="dashboard.html" class="mobile-nav-link" data-i18n="nav.dashboard">My Dashboard</a>
+        <a href="#about" class="mobile-nav-link" data-i18n="nav.about">About</a>
+        <div class="mobile-lang-row">
+          <span>Language / भाषा:</span>
+          <div class="lang-switch" role="group" aria-label="Language switch">
+            <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">English</button>
+            <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिन्दी</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary mobile-auth-btn" id="mobile-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- =========================================================
+         2. HERO SECTION
+         ========================================================= -->
+    <section class="hero" id="home" aria-labelledby="hero-heading">
+      <div class="hero-media" aria-hidden="true">
+        <img
+          src="src/assets/images/hero_yatra_panorama_1795160234745.jpg"
+          alt="Mirror-still turquoise Himalayan lake reflecting snow-capped peaks at twilight"
+          class="hero-img"
+          referrerpolicy="no-referrer"
+        />
+        <div class="hero-scrim"></div>
+      </div>
+
+      <div class="container hero-content">
+        <p class="hero-tagline" data-i18n="hero.tagline">Explore More. Experience Beyond.</p>
+        <h1 class="hero-title" id="hero-heading" data-i18n="hero.title">Your Next Journey Begins Here.</h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">
+          Discover India’s most unforgettable mountains, serene backwaters, coastal retreats, and living heritage—paired with intelligent itinerary planning and clear budget guidance.
+        </p>
+
+        <!-- Destination Search Bar -->
+        <form class="hero-search-bar" id="hero-search-form" role="search" aria-label="Search destinations">
+          <div class="search-field-group">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <label for="hero-search-input" class="sr-only">Search destinations or travel styles</label>
+            <input
+              type="search"
+              id="hero-search-input"
+              class="search-input"
+              placeholder="Search Manali, Goa, Kashmir, Kerala, Jaipur, Meghalaya..."
+              data-i18n-placeholder="hero.searchPlaceholder"
+              autocomplete="off"
+            />
+            <button type="button" class="search-clear-btn" id="search-clear-btn" aria-label="Clear search" hidden>
+              &times;
+            </button>
+          </div>
+          <div class="search-select-group">
+            <label for="hero-style-select" class="sr-only">Filter by experience</label>
+            <select id="hero-style-select" class="search-select">
+              <option value="all">All Styles</option>
+              <option value="Mountains">Mountains</option>
+              <option value="Beaches">Beaches</option>
+              <option value="Heritage">Historical</option>
+              <option value="Nature">Nature &amp; Adventure</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-search" data-i18n="hero.searchBtn">Search</button>
+        </form>
+
+        <!-- Quick Search Suggestions -->
+        <div class="hero-quick-links" aria-label="Popular searches">
+          <span class="quick-links-label" data-i18n="hero.popular">Popular:</span>
+          <button type="button" class="quick-link-btn" data-quick-search="Manali">Manali</button>
+          <span class="sep" aria-hidden="true">&middot;</span>
+          <button type="button" class="quick-link-btn" data-quick-search="Kashmir">Kashmir</button>
+          <span class="sep" aria-hidden="true">&middot;</span>
+          <button type="button" class="quick-link-btn" data-quick-search="Kerala">Kerala</button>
+          <span class="sep" aria-hidden="true">&middot;</span>
+          <button type="button" class="quick-link-btn" data-quick-search="Goa">Goa</button>
+          <span class="sep" aria-hidden="true">&middot;</span>
+          <button type="button" class="quick-link-btn" data-quick-search="Meghalaya">Meghalaya</button>
+        </div>
+
+        <!-- Primary Action Buttons -->
+        <div class="hero-actions">
+          <a href="#destinations" class="btn btn-primary" data-i18n="hero.exploreCta">Explore Destinations</a>
+          <a href="#ai-planner" class="btn btn-secondary" id="hero-plan-btn" data-i18n="hero.planCta">Plan My Trip</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         3. POPULAR DESTINATIONS
+         ========================================================= -->
+    <section class="section destinations-section" id="destinations" aria-labelledby="destinations-heading">
+      <div class="container">
+        <div class="section-header-row">
+          <div class="section-heading-block">
+            <p class="section-kicker" data-i18n="home.curatedKicker">Curated Regions</p>
+            <h2 class="section-title" id="destinations-heading" data-i18n="home.popularTitle">Popular Destinations</h2>
+            <p class="section-lead" data-i18n="home.popularLead">
+              Six signature regions across India selected for seasonal clarity, scenic contrast, and memorable pacing.
+            </p>
+          </div>
+
+          <!-- Interactive Filter Tabs + Wishlist Access -->
+          <div class="destinations-controls">
+            <div class="filter-tabs" role="tablist" aria-label="Filter destinations by category">
+              <button type="button" class="filter-tab active" role="tab" aria-selected="true" data-filter="all">All</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-filter="Mountains">Mountains</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-filter="Beaches">Beaches</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-filter="Heritage">Heritage</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-filter="Nature">Nature</button>
+            </div>
+            <button type="button" class="btn btn-wishlist-pill" id="open-wishlist-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              <span>Wishlist (<span id="wishlist-count-badge">0</span>)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Search Status Bar (shown dynamically when filtering/searching) -->
+        <div class="search-status-bar" id="search-status-bar" hidden>
+          <p id="search-status-text"></p>
+          <button type="button" class="btn-link" id="reset-filters-btn">Reset filters</button>
+        </div>
+
+        <!-- Destinations Grid -->
+        <div class="destinations-grid" id="destinations-grid">
+          <!-- Manali -->
+          <article
+            class="destination-card"
+            data-name="Manali"
+            data-region="Himachal Pradesh"
+            data-category="Mountains"
+            data-keywords="manali himachal mountains snow valley beas river trekking"
+            data-duration="4–5 Days"
+            data-budget="₹14,500"
+            data-season="Oct – Jun"
+            data-highlights="Solang Valley alpine ridge|Old Manali cedar trails|Atal Tunnel to Sissu|Beas riverside cafes"
+          >
+            <div class="card-media">
+              <div class="media-fallback" aria-hidden="true">
+                <span>Manali</span>
+              </div>
+              <img
+                src="src/assets/images/dest_manali_1795160234518.jpg"
+                alt="Pine forests along the Beas river and snow-capped Himalayan peaks in Manali"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+            <div class="card-body">
+              <p class="card-meta">
+                <span>Himachal Pradesh</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Mountains</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Oct – Jun</span>
+              </p>
+              <h3 class="card-title">Manali</h3>
+              <p class="card-desc">
+                Cedar-lined river valleys, high-altitude passes, and crisp alpine air ideal for slow mountain retreats and scenic treks.
+              </p>
+              <div class="card-footer">
+                <span class="card-stat">4–5 Days &middot; Guide from &#8377;14,500</span>
+                <div class="card-actions-group">
+                  <button type="button" class="btn-wishlist-toggle" data-wishlist-id="manali" aria-pressed="false" aria-label="Save Manali to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-card-action" data-open-destination="Manali">View Guide</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Goa -->
+          <article
+            class="destination-card"
+            data-name="Goa"
+            data-region="Konkan Coast"
+            data-category="Beaches"
+            data-keywords="goa beach coast arabian sea sunset palms konkan relaxation"
+            data-duration="3–4 Days"
+            data-budget="₹13,000"
+            data-season="Nov – Mar"
+            data-highlights="Palolem & Agonda golden coves|Fontainhas heritage walk|Chapora cliff sunset|Coastal spice plantations"
+          >
+            <div class="card-media">
+              <div class="media-fallback" aria-hidden="true">
+                <span>Goa</span>
+              </div>
+              <img
+                src="src/assets/images/dest_goa_1795160234653.jpg"
+                alt="Palm-fringed golden beach in South Goa beside calm Arabian Sea waves at sunset"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+            <div class="card-body">
+              <p class="card-meta">
+                <span>Konkan Coast</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Beaches</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Nov – Mar</span>
+              </p>
+              <h3 class="card-title">Goa</h3>
+              <p class="card-desc">
+                Sun-warmed coastal coves, palm groves, and quiet Latin quarters blending laid-back shore mornings with vibrant evening dining.
+              </p>
+              <div class="card-footer">
+                <span class="card-stat">3–4 Days &middot; Guide from &#8377;13,000</span>
+                <div class="card-actions-group">
+                  <button type="button" class="btn-wishlist-toggle" data-wishlist-id="goa" aria-pressed="false" aria-label="Save Goa to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-card-action" data-open-destination="Goa">View Guide</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Jaipur -->
+          <article
+            class="destination-card"
+            data-name="Jaipur"
+            data-region="Rajasthan"
+            data-category="Heritage"
+            data-keywords="jaipur rajasthan heritage history fort palace amber architecture pink city"
+            data-duration="3–4 Days"
+            data-budget="₹12,000"
+            data-season="Oct – Mar"
+            data-highlights="Amber Fort sunrise ramparts|Hawa Mahal & City Palace|Jantar Mantar observatory|Johari craft bazaars"
+          >
+            <div class="card-media">
+              <div class="media-fallback" aria-hidden="true">
+                <span>Jaipur</span>
+              </div>
+              <img
+                src="src/assets/images/dest_jaipur_1795160234828.jpg"
+                alt="Amber Fort sandstone palace walls illuminated above calm Maota Lake in Jaipur"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+            <div class="card-body">
+              <p class="card-meta">
+                <span>Rajasthan</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Heritage</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Oct – Mar</span>
+              </p>
+              <h3 class="card-title">Jaipur</h3>
+              <p class="card-desc">
+                Hilltop sandstone citadels, astronomical monuments, and living artisan courtyards painted in warm terracotta and twilight gold.
+              </p>
+              <div class="card-footer">
+                <span class="card-stat">3–4 Days &middot; Guide from &#8377;12,000</span>
+                <div class="card-actions-group">
+                  <button type="button" class="btn-wishlist-toggle" data-wishlist-id="jaipur" aria-pressed="false" aria-label="Save Jaipur to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-card-action" data-open-destination="Jaipur">View Guide</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Kashmir -->
+          <article
+            class="destination-card"
+            data-name="Kashmir"
+            data-region="Srinagar & Gulmarg"
+            data-category="Mountains"
+            data-keywords="kashmir srinagar dal lake shikara gulmarg pahalgam mountains alpine snow"
+            data-duration="5–6 Days"
+            data-budget="₹21,500"
+            data-season="Apr – Oct"
+            data-highlights="Dawn shikara on Dal Lake|Gulmarg meadow gondola|Pahalgam Betaab valley|Mughal terraced gardens"
+          >
+            <div class="card-media">
+              <div class="media-fallback" aria-hidden="true">
+                <span>Kashmir</span>
+              </div>
+              <img
+                src="src/assets/images/dest_kashmir_1795160234553.jpg"
+                alt="Traditional wooden shikara boat resting on serene Dal Lake with misty Zabarwan mountains in Kashmir"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+            <div class="card-body">
+              <p class="card-meta">
+                <span>Srinagar &amp; Gulmarg</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Mountains</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Apr – Oct</span>
+              </p>
+              <h3 class="card-title">Kashmir</h3>
+              <p class="card-desc">
+                Mirror-calm lakes framed by misty Zabarwan ridges, walnut groves, and alpine meadows crafted for unhurried exploration.
+              </p>
+              <div class="card-footer">
+                <span class="card-stat">5–6 Days &middot; Guide from &#8377;21,500</span>
+                <div class="card-actions-group">
+                  <button type="button" class="btn-wishlist-toggle" data-wishlist-id="kashmir" aria-pressed="false" aria-label="Save Kashmir to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-card-action" data-open-destination="Kashmir">View Guide</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Kerala -->
+          <article
+            class="destination-card"
+            data-name="Kerala"
+            data-region="Alleppey & Munnar"
+            data-category="Nature"
+            data-keywords="kerala backwaters houseboat alleppey munnar tea gardens nature lagoons emerald"
+            data-duration="5 Days"
+            data-budget="₹18,000"
+            data-season="Sep – Mar"
+            data-highlights="Alleppey backwater houseboat|Munnar misty tea estates|Fort Kochi coastal promenade|Periyar spice sanctuary"
+          >
+            <div class="card-media">
+              <div class="media-fallback" aria-hidden="true">
+                <span>Kerala</span>
+              </div>
+              <img
+                src="src/assets/images/dest_kerala_1795160234548.jpg"
+                alt="Traditional wooden houseboat gliding across emerald Kerala backwaters lined with coconut palms"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+            <div class="card-body">
+              <p class="card-meta">
+                <span>Alleppey &amp; Munnar</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Nature</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Sep – Mar</span>
+              </p>
+              <h3 class="card-title">Kerala</h3>
+              <p class="card-desc">
+                Emerald palm-fringed lagoons, mist-draped Western Ghats tea hills, and calm coastal towns rich in maritime heritage.
+              </p>
+              <div class="card-footer">
+                <span class="card-stat">5 Days &middot; Guide from &#8377;18,000</span>
+                <div class="card-actions-group">
+                  <button type="button" class="btn-wishlist-toggle" data-wishlist-id="kerala" aria-pressed="false" aria-label="Save Kerala to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-card-action" data-open-destination="Kerala">View Guide</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Meghalaya -->
+          <article
+            class="destination-card"
+            data-name="Meghalaya"
+            data-region="Northeast Hills"
+            data-category="Nature"
+            data-keywords="meghalaya shillong cherrapunji waterfalls living root bridge canyons adventure nature"
+            data-duration="5–6 Days"
+            data-budget="₹19,500"
+            data-season="Oct – May"
+            data-highlights="Nongriat double-decker root bridge|Dawki crystal Umngot river|Nohkalikai canyon plunge|Laitlum plateau ridge"
+          >
+            <div class="card-media">
+              <div class="media-fallback" aria-hidden="true">
+                <span>Meghalaya</span>
+              </div>
+              <img
+                src="src/assets/images/dest_meghalaya_1795160234524.jpg"
+                alt="Cascading turquoise waterfall surrounded by misty emerald rainforest cliffs in Meghalaya"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+            <div class="card-body">
+              <p class="card-meta">
+                <span>Northeast Hills</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Nature</span>
+                <span aria-hidden="true">&middot;</span>
+                <span>Oct – May</span>
+              </p>
+              <h3 class="card-title">Meghalaya</h3>
+              <p class="card-desc">
+                Living root bridges, emerald rainforest canyons, and glass-clear rivers nestled beneath drifting highland clouds.
+              </p>
+              <div class="card-footer">
+                <span class="card-stat">5–6 Days &middot; Guide from &#8377;19,500</span>
+                <div class="card-actions-group">
+                  <button type="button" class="btn-wishlist-toggle" data-wishlist-id="meghalaya" aria-pressed="false" aria-label="Save Meghalaya to wishlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-card-action" data-open-destination="Meghalaya">View Guide</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Empty Search State -->
+        <div class="empty-results" id="empty-results" hidden>
+          <h3>No matching destinations found</h3>
+          <p>Try searching for Manali, Goa, Jaipur, Kashmir, Kerala, or Meghalaya, or clear your active filter.</p>
+          <button type="button" class="btn btn-primary" id="empty-reset-btn">Show All Destinations</button>
+        </div>
+
+        <div class="destinations-explore-cta">
+          <a href="explore.html" class="btn btn-primary">Explore All 16 Indian Destinations &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         4. WHY CHOOSE YATRA SPHERE?
+         ========================================================= -->
+    <section class="section why-section" id="about" aria-labelledby="why-heading">
+      <div class="container">
+        <div class="why-layout">
+          <div class="why-intro">
+            <p class="section-kicker">About Yatra Sphere</p>
+            <h2 class="section-title" id="why-heading">Why Choose Yatra Sphere?</h2>
+            <p class="section-lead">
+              Travel planning often fragments across dozens of tabs, mismatched maps, and guesswork budgets. Yatra Sphere unifies regional discovery, intelligent routing, and clear cost structure in one calm workspace.
+            </p>
+            <div class="why-summary-metrics">
+              <div class="metric-item">
+                <span class="metric-value">6</span>
+                <span class="metric-label">Signature Indian Regions</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value">4</span>
+                <span class="metric-label">Core Experience Styles</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value">3 Steps</span>
+                <span class="metric-label">Discovery to Departure</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="benefits-grid">
+            <article class="benefit-card">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" />
+                </svg>
+              </div>
+              <h3 class="benefit-title">01. AI Trip Planning</h3>
+              <p class="benefit-text">
+                Sequence multi-day routes around real transit distances, sunrise windows, and seasonal road conditions without backtracking.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                  <line x1="2" y1="10" x2="22" y2="10" />
+                </svg>
+              </div>
+              <h3 class="benefit-title">02. Budget Management</h3>
+              <p class="benefit-text">
+                Compare stay tiers, intercity transport, and local entry fees upfront with transparent sample estimates before committing.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                </svg>
+              </div>
+              <h3 class="benefit-title">03. Personalized Recommendations</h3>
+              <p class="benefit-text">
+                Match destinations to your travel pace—from quiet misty valleys and coastal coves to architectural heritage circuits.
+              </p>
+            </article>
+
+            <article class="benefit-card">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </div>
+              <h3 class="benefit-title">04. Easy Travel Planning</h3>
+              <p class="benefit-text">
+                Organize day-by-day highlights, ideal travel months, and essential regional notes in a clean, distraction-free layout.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         5. HOW IT WORKS
+         ========================================================= -->
+    <section class="section process-section" aria-labelledby="process-heading">
+      <div class="container">
+        <div class="section-header-centered">
+          <p class="section-kicker">Simple Workflow</p>
+          <h2 class="section-title" id="process-heading">How It Works</h2>
+          <p class="section-lead">
+            Move from initial spark to a grounded itinerary in three deliberate stages.
+          </p>
+        </div>
+
+        <ol class="steps-grid">
+          <li class="step-card">
+            <div class="step-header">
+              <span class="step-number">01</span>
+              <span class="step-line" aria-hidden="true"></span>
+            </div>
+            <h3 class="step-title">Discover</h3>
+            <p class="step-text">
+              Explore curated destinations and experience categories filtered by season, landscape, and personal travel rhythm.
+            </p>
+          </li>
+
+          <li class="step-card">
+            <div class="step-header">
+              <span class="step-number">02</span>
+              <span class="step-line" aria-hidden="true"></span>
+            </div>
+            <h3 class="step-title">Plan</h3>
+            <p class="step-text">
+              Shape your route duration, align indicative budgets, and organize each day around realistic travel times and local highlights.
+            </p>
+          </li>
+
+          <li class="step-card">
+            <div class="step-header">
+              <span class="step-number">03</span>
+              <span class="step-line" aria-hidden="true"></span>
+            </div>
+            <h3 class="step-title">Explore</h3>
+            <p class="step-text">
+              Travel with confidence knowing your stops, seasonal timing, and daily pacing are thoughtfully balanced ahead of time.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         6. FEATURED EXPERIENCES
+         ========================================================= -->
+    <section class="section experiences-section" id="explore" aria-labelledby="experiences-heading">
+      <div class="container">
+        <div class="section-header-row">
+          <div class="section-heading-block">
+            <p class="section-kicker">Curated Styles</p>
+            <h2 class="section-title" id="experiences-heading">Featured Experiences</h2>
+            <p class="section-lead">
+              Select a travel mood below to focus your exploration across matching regions.
+            </p>
+          </div>
+        </div>
+
+        <div class="experiences-grid">
+          <article class="experience-card experience-wide">
+            <div class="experience-media">
+              <div class="media-fallback" aria-hidden="true"><span>Mountains</span></div>
+              <img
+                src="src/assets/images/exp_mountains_1795160235475.jpg"
+                alt="High-altitude Himalayan mountain ridge trail bathed in golden dawn light"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+              <div class="experience-scrim"></div>
+            </div>
+            <div class="experience-content">
+              <p class="experience-meta">Highland Trails &middot; Alpine Valleys</p>
+              <h3 class="experience-title">Mountains</h3>
+              <p class="experience-desc">
+                Crisp cedar forests, snow-dusted passes, and tranquil Himalayan lakes in Manali and Kashmir.
+              </p>
+              <button type="button" class="btn-experience" data-experience-filter="Mountains">
+                Explore Mountain Routes &rarr;
+              </button>
+            </div>
+          </article>
+
+          <article class="experience-card">
+            <div class="experience-media">
+              <div class="media-fallback" aria-hidden="true"><span>Beaches</span></div>
+              <img
+                src="src/assets/images/exp_beaches_1795160234495.jpg"
+                alt="Secluded tropical cove with clear turquoise water and coastal greenery"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+              <div class="experience-scrim"></div>
+            </div>
+            <div class="experience-content">
+              <p class="experience-meta">Coastal Retreats &middot; Island Coves</p>
+              <h3 class="experience-title">Beaches</h3>
+              <p class="experience-desc">
+                Golden Konkan shorelines, warm evening tides, and quiet palm-lined bays in Goa.
+              </p>
+              <button type="button" class="btn-experience" data-experience-filter="Beaches">
+                Explore Beach Escapes &rarr;
+              </button>
+            </div>
+          </article>
+
+          <article class="experience-card">
+            <div class="experience-media">
+              <div class="media-fallback" aria-hidden="true"><span>Historical Destinations</span></div>
+              <img
+                src="src/assets/images/exp_historical_1795160234443.jpg"
+                alt="Carved sandstone arches and colonnades inside a historic Indian fort courtyard"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+              <div class="experience-scrim"></div>
+            </div>
+            <div class="experience-content">
+              <p class="experience-meta">Architecture &middot; Living Culture</p>
+              <h3 class="experience-title">Historical Destinations</h3>
+              <p class="experience-desc">
+                Royal sandstone citadels, stepwells, and artisan districts anchored in Jaipur.
+              </p>
+              <button type="button" class="btn-experience" data-experience-filter="Heritage">
+                Explore Heritage Cities &rarr;
+              </button>
+            </div>
+          </article>
+
+          <article class="experience-card experience-wide">
+            <div class="experience-media">
+              <div class="media-fallback" aria-hidden="true"><span>Adventure Travel</span></div>
+              <img
+                src="src/assets/images/exp_adventure_1795160235086.jpg"
+                alt="Kayaker paddling through clear emerald mountain river rapids in a rocky gorge"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              />
+              <div class="experience-scrim"></div>
+            </div>
+            <div class="experience-content">
+              <p class="experience-meta">Canyons &middot; River Expeditions</p>
+              <h3 class="experience-title">Adventure Travel</h3>
+              <p class="experience-desc">
+                Waterfall canyon treks, living root bridges, and emerald river trails across Meghalaya and Kerala.
+              </p>
+              <button type="button" class="btn-experience" data-experience-filter="Nature">
+                Explore Adventure Trails &rarr;
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         7. AI TRIP PLANNER PROMOTION
+         ========================================================= -->
+    <section class="section planner-promo-section" id="ai-planner" aria-labelledby="planner-heading">
+      <div class="container">
+        <div class="planner-banner">
+          <div class="planner-copy">
+            <p class="section-kicker kicker-light">Intelligent Itinerary Foundation</p>
+            <h2 class="planner-title" id="planner-heading">
+              Craft a Balanced Journey in Seconds with the Yatra Sphere Planner
+            </h2>
+            <p class="planner-desc">
+              Tell us your destination, travel duration, and preferred pace. Preview a structured day-by-day itinerary with indicative budget allocation before our full AI planner workspace launches.
+            </p>
+            <ul class="planner-highlights">
+              <li>Day-wise route sequencing without unrealistic transit jumps</li>
+              <li>Clear stay, transport, and activity budget split</li>
+              <li>Honest simulated preview mode for immediate exploration</li>
+            </ul>
+            <div class="planner-actions">
+              <a href="planner.html" class="btn btn-emerald">Open Smart Trip Planner &rarr;</a>
+              <a href="#route-planner" class="btn btn-outline-light">Google Maps Route Planner</a>
+              <a href="assistant.html" class="btn btn-outline-light">Ask AI Assistant</a>
+              <button type="button" class="btn btn-outline-light" id="launch-planner-btn">
+                Try Quick Preview
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Foundation Preview Card (Simulated Demo Mode) -->
+          <div class="planner-preview-card" aria-label="Sample itinerary preview">
+            <div class="preview-card-header">
+              <span class="preview-label">Sample Itinerary Preview</span>
+              <span class="preview-mode-note">Simulated Demo Data</span>
+            </div>
+
+            <form class="mini-planner-form" id="mini-planner-form">
+              <div class="mini-field">
+                <label for="planner-dest">Destination</label>
+                <select id="planner-dest" name="destination">
+                  <option value="Kashmir">Kashmir</option>
+                  <option value="Manali">Manali</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Jaipur">Jaipur</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Meghalaya">Meghalaya</option>
+                </select>
+              </div>
+              <div class="mini-field">
+                <label for="planner-days">Duration</label>
+                <select id="planner-days" name="days">
+                  <option value="3">3 Days</option>
+                  <option value="5" selected>5 Days</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-teal-full">Generate Sample Outline</button>
+            </form>
+
+            <div class="planner-output" id="planner-output" aria-live="polite">
+              <!-- Populated by script.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         7B. GOOGLE MAPS & SMART TRAVEL ROUTE PLANNER
+         ========================================================= -->
+    <section class="section route-planner-section" id="route-planner" aria-labelledby="route-planner-heading">
+      <div class="container">
+        <div class="section-header-row rp-header-row">
+          <div class="section-heading-block">
+            <p class="section-kicker" data-i18n="rp.kicker">Plan Your Journey</p>
+            <h2 class="section-title" id="route-planner-heading" data-i18n="rp.title">Your Journey, Your Way.</h2>
+            <p class="section-lead" data-i18n="rp.subtitle">
+              Choose your starting point, destination and travel preferences. Let Google Maps guide your journey.
+            </p>
+          </div>
+          <div class="rp-quick-corridors" aria-label="Popular route presets">
+            <span class="rp-corridors-label">Quick Corridors:</span>
+            <button type="button" class="btn-card-action rp-preset-btn" data-rp-preset="Patna|New Delhi">Patna &rarr; Delhi</button>
+            <button type="button" class="btn-card-action rp-preset-btn" data-rp-preset="New Delhi|Agra|Jaipur">Delhi &rarr; Agra &rarr; Jaipur</button>
+            <button type="button" class="btn-card-action rp-preset-btn" data-rp-preset="Mumbai|Goa">Mumbai &rarr; Goa</button>
+          </div>
+        </div>
+
+        <div class="rp-workspace-grid">
+          <!-- Form Card -->
+          <form class="rp-form-card" id="rp-form" novalidate>
+            <div class="auth-form-alert" id="rp-error-banner" role="alert" hidden></div>
+
+            <!-- Locations Row -->
+            <div class="rp-locations-block">
+              <div class="rp-locations-grid">
+                <div class="form-field rp-location-field">
+                  <label for="rp-origin">
+                    <svg class="rp-label-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M12 2v3" />
+                      <path d="M12 19v3" />
+                      <path d="M2 12h3" />
+                      <path d="M19 12h3" />
+                    </svg>
+                    <span>Starting Destination</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="rp-origin"
+                    name="rpOrigin"
+                    list="rp-origin-suggestions"
+                    placeholder="Enter your starting location"
+                    autocomplete="off"
+                    required
+                  />
+                  <datalist id="rp-origin-suggestions">
+                    <option value="Patna"></option>
+                    <option value="New Delhi"></option>
+                    <option value="Mumbai"></option>
+                    <option value="Bengaluru"></option>
+                    <option value="Chennai"></option>
+                    <option value="Kolkata"></option>
+                    <option value="Hyderabad"></option>
+                    <option value="Pune"></option>
+                    <option value="Ahmedabad"></option>
+                    <option value="Jaipur"></option>
+                    <option value="Lucknow"></option>
+                    <option value="Varanasi"></option>
+                    <option value="Chandigarh"></option>
+                    <option value="Guwahati"></option>
+                    <option value="Kochi"></option>
+                    <option value="Patna Junction, Patna"></option>
+                    <option value="Indira Gandhi International Airport, Delhi"></option>
+                  </datalist>
+                </div>
+
+                <div class="rp-swap-col">
+                  <button
+                    type="button"
+                    class="rp-swap-btn"
+                    id="rp-swap-btn"
+                    aria-label="Swap starting location and destination"
+                    title="Swap Locations"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="17 1 21 5 17 9" />
+                      <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                      <polyline points="7 23 3 19 7 15" />
+                      <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                    </svg>
+                    <span class="rp-swap-text" data-i18n="rp.swapBtn">Swap Locations</span>
+                  </button>
+                </div>
+
+                <div class="form-field rp-location-field">
+                  <label for="rp-destination">
+                    <svg class="rp-label-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span>Ending Destination</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="rp-destination"
+                    name="rpDestination"
+                    list="rp-dest-suggestions"
+                    placeholder="Where do you want to go?"
+                    autocomplete="off"
+                    required
+                  />
+                  <datalist id="rp-dest-suggestions">
+                    <option value="New Delhi"></option>
+                    <option value="Manali"></option>
+                    <option value="Goa"></option>
+                    <option value="Jaipur"></option>
+                    <option value="Kashmir"></option>
+                  </datalist>
+                </div>
+              </div>
+
+              <!-- Intermediate Stops / Waypoints -->
+              <div class="rp-waypoints-box" id="rp-waypoints-box">
+                <div class="rp-waypoints-head">
+                  <div>
+                    <span class="field-group-label">Intermediate Stops (Optional)</span>
+                    <span class="rp-stops-count tabular-nums" id="rp-stops-count">Direct route (0 stops)</span>
+                  </div>
+                  <button type="button" class="btn-card-action" id="rp-add-stop-btn" data-i18n="rp.addStopBtn">
+                    + Add Stop
+                  </button>
+                </div>
+                <div class="rp-stops-list" id="rp-stops-list" aria-live="polite">
+                  <!-- Populated dynamically by route-planner.js -->
+                </div>
+              </div>
+
+              <div class="rp-location-actions">
+                <button type="button" class="btn-link" id="rp-open-origin-btn">
+                  Open Starting Location in Google Maps &nearr;
+                </button>
+                <button type="button" class="btn-link" id="rp-open-dest-btn">
+                  Open Destination in Google Maps &nearr;
+                </button>
+              </div>
+            </div>
+
+            <!-- Date & Trip Type Row -->
+            <div class="rp-meta-grid">
+              <div class="form-field">
+                <label for="rp-date">Travel Date</label>
+                <input type="date" id="rp-date" name="rpDate" required />
+              </div>
+
+              <div class="form-field">
+                <span class="field-group-label">Trip Type</span>
+                <div class="rp-trip-type-grid" role="radiogroup" aria-label="Trip Type">
+                  <label class="rp-radio-chip">
+                    <input type="radio" name="rpTripType" value="One Way" checked />
+                    <span>One Way</span>
+                  </label>
+                  <label class="rp-radio-chip">
+                    <input type="radio" name="rpTripType" value="Round Trip" />
+                    <span>Round Trip</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Participant Management -->
+            <div class="rp-participants-box">
+              <div class="rp-participants-head">
+                <span class="field-group-label">Participant Management</span>
+                <span class="rp-members-readout" id="rp-members-readout">1 Total Travelling Member (1 Adult)</span>
+              </div>
+
+              <div class="rp-steppers-grid">
+                <div class="rp-stepper-field">
+                  <label for="rp-total-participants">Total Participants</label>
+                  <div class="rp-stepper-control">
+                    <button type="button" class="rp-step-btn" id="rp-total-dec" aria-label="Decrease total participants">&minus;</button>
+                    <input type="number" id="rp-total-participants" min="1" step="1" value="1" required />
+                    <button type="button" class="rp-step-btn" id="rp-total-inc" aria-label="Increase total participants">+</button>
+                  </div>
+                </div>
+
+                <div class="rp-stepper-field">
+                  <label for="rp-adults">Adults</label>
+                  <div class="rp-stepper-control">
+                    <button type="button" class="rp-step-btn" id="rp-adults-dec" aria-label="Decrease adults">&minus;</button>
+                    <input type="number" id="rp-adults" min="1" step="1" value="1" required />
+                    <button type="button" class="rp-step-btn" id="rp-adults-inc" aria-label="Increase adults">+</button>
+                  </div>
+                </div>
+
+                <div class="rp-stepper-field">
+                  <label for="rp-children">Children (Optional)</label>
+                  <div class="rp-stepper-control">
+                    <button type="button" class="rp-step-btn" id="rp-children-dec" aria-label="Decrease children">&minus;</button>
+                    <input type="number" id="rp-children" min="0" step="1" value="0" />
+                    <button type="button" class="rp-step-btn" id="rp-children-inc" aria-label="Increase children">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Travel Mode -->
+            <div class="form-field field-full">
+              <span class="field-group-label">Travel Mode</span>
+              <div class="rp-modes-grid" role="radiogroup" aria-label="Travel Mode">
+                <label class="rp-choice-tile">
+                  <input type="radio" name="rpTravelMode" value="driving" checked />
+                  <svg class="rp-tile-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 17H3v-5l2-5h14l2 5v5h-2" />
+                    <circle cx="7.5" cy="17.5" r="2.5" />
+                    <circle cx="16.5" cy="17.5" r="2.5" />
+                  </svg>
+                  <span class="rp-tile-title">Driving</span>
+                </label>
+
+                <label class="rp-choice-tile">
+                  <input type="radio" name="rpTravelMode" value="walking" />
+                  <svg class="rp-tile-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="13" cy="4" r="2" />
+                    <path d="M13 7l-3 5 3 3-1 6" />
+                    <path d="M10 12l-4 3" />
+                    <path d="M14 9l4 2" />
+                  </svg>
+                  <span class="rp-tile-title">Walking</span>
+                </label>
+
+                <label class="rp-choice-tile">
+                  <input type="radio" name="rpTravelMode" value="bicycling" />
+                  <svg class="rp-tile-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="5.5" cy="17.5" r="3.5" />
+                    <circle cx="18.5" cy="17.5" r="3.5" />
+                    <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h3" />
+                  </svg>
+                  <span class="rp-tile-title">Cycling</span>
+                </label>
+
+                <label class="rp-choice-tile">
+                  <input type="radio" name="rpTravelMode" value="transit" />
+                  <svg class="rp-tile-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4" y="3" width="16" height="15" rx="2" />
+                    <path d="M4 11h16" />
+                    <path d="M8 21l2-3" />
+                    <path d="M16 21l-2-3" />
+                    <circle cx="8" cy="15" r="1" />
+                    <circle cx="16" cy="15" r="1" />
+                  </svg>
+                  <span class="rp-tile-title">Transit</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Additional Preferences -->
+            <div class="form-field field-full">
+              <span class="field-group-label">Additional Preferences</span>
+              <div class="rp-prefs-grid" role="radiogroup" aria-label="Additional Preferences">
+                <label class="rp-radio-chip">
+                  <input type="radio" name="rpPreference" value="Family Trip" />
+                  <span>Family Trip</span>
+                </label>
+                <label class="rp-radio-chip">
+                  <input type="radio" name="rpPreference" value="Friends Trip" />
+                  <span>Friends Trip</span>
+                </label>
+                <label class="rp-radio-chip">
+                  <input type="radio" name="rpPreference" value="Solo Trip" checked />
+                  <span>Solo Trip</span>
+                </label>
+                <label class="rp-radio-chip">
+                  <input type="radio" name="rpPreference" value="Business Trip" />
+                  <span>Business Trip</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Form Utility Controls -->
+            <div class="rp-form-actions-bar">
+              <button type="button" class="btn-card-action" id="rp-reset-btn" data-i18n="rp.resetBtn">Reset Form</button>
+              <button type="button" class="btn-card-action" id="rp-copy-btn" data-i18n="rp.copyBtn">Copy Journey Details</button>
+            </div>
+          </form>
+
+          <!-- Live Travel Summary Card -->
+          <aside class="rp-summary-card" aria-labelledby="rp-summary-heading">
+            <div class="rp-summary-header">
+              <p class="section-kicker">Travel Summary</p>
+              <h3 class="rp-summary-headline" id="rp-sum-headline">Enter origin &amp; destination</h3>
+            </div>
+
+            <dl class="rp-summary-list" id="rp-summary-heading">
+              <div class="rp-summary-row">
+                <dt>Starting Destination</dt>
+                <dd id="rp-sum-origin">Not entered yet</dd>
+              </div>
+              <div class="rp-summary-row">
+                <dt>Intermediate Stops</dt>
+                <dd id="rp-sum-stops">None (Direct route)</dd>
+              </div>
+              <div class="rp-summary-row">
+                <dt>Ending Destination</dt>
+                <dd id="rp-sum-dest">Not entered yet</dd>
+              </div>
+              <div class="rp-summary-row">
+                <dt>Total Participants</dt>
+                <dd id="rp-sum-participants" class="tabular-nums">1 (1 Adult, 0 Children)</dd>
+              </div>
+              <div class="rp-summary-row">
+                <dt>Travel Date</dt>
+                <dd id="rp-sum-date" class="tabular-nums">Today</dd>
+              </div>
+              <div class="rp-summary-row">
+                <dt>Travel Mode</dt>
+                <dd id="rp-sum-mode">Driving (driving)</dd>
+              </div>
+              <div class="rp-summary-row">
+                <dt>Trip Type</dt>
+                <dd id="rp-sum-trip-type">One Way</dd>
+              </div>
+              <div class="rp-summary-row">
+                <dt>Trip Preference</dt>
+                <dd id="rp-sum-preference">Solo Trip</dd>
+              </div>
+            </dl>
+
+            <!-- Round Trip Return Journey Box -->
+            <div class="rp-return-card" id="rp-return-card" hidden>
+              <p class="rp-return-kicker">Round Trip &middot; Return Journey</p>
+              <p class="rp-return-route">
+                <strong id="rp-return-origin">Destination</strong>
+                <span aria-hidden="true">&rarr;</span>
+                <strong id="rp-return-dest">Starting Location</strong>
+              </p>
+              <button type="button" class="btn-card-action btn-full" id="rp-open-return-btn" data-i18n="rp.openReturnBtn">
+                Open Return Route in Google Maps
+              </button>
+            </div>
+
+            <p class="rp-honesty-note">
+              Participant count, travel date, and preferences help organize your Yatra Sphere journey summary. Google Maps directions receive your starting location, destination, and travel mode.
+            </p>
+
+            <button type="button" class="btn btn-primary btn-full rp-launch-btn" id="rp-open-route-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="3 11 22 2 13 21 11 13 3 11" />
+              </svg>
+              <span data-i18n="rp.openMapsBtn">Show Route on Google Maps</span>
+            </button>
+
+            <button type="button" class="btn-card-action btn-full rp-save-route-btn" id="rp-save-route-btn" style="margin-top: 10px;">
+              Save Route to My Trips
+            </button>
+
+            <div class="rp-direct-links-box" id="rp-direct-links-box" hidden>
+              <a href="#" id="rp-direct-outbound-link" target="_blank" rel="noopener noreferrer" class="btn-link">
+                Direct Directions Link &nearr;
+              </a>
+              <a href="#" id="rp-direct-return-link" target="_blank" rel="noopener noreferrer" class="btn-link" hidden>
+                Direct Return Link &nearr;
+              </a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         8. TRAVEL TOOLS HUB
+         ========================================================= -->
+    <section class="section tools-hub-section" id="travel-tools" aria-labelledby="tools-hub-heading">
+      <div class="container">
+        <div class="section-header-row">
+          <div class="section-heading-block">
+            <p class="section-kicker">Interactive Utilities</p>
+            <h2 class="section-title" id="tools-hub-heading">Travel Tools</h2>
+            <p class="section-lead">
+              Check interactive OpenStreetMap routes, live 7-day weather forecasts, illustrative stay tiers, and multi-mode Indian transit comparisons in one unified workspace.
+            </p>
+          </div>
+          <div>
+            <a href="tools.html" class="btn btn-primary">Open Travel Tools &rarr;</a>
+          </div>
+        </div>
+
+        <div class="tools-hub-grid">
+          <a href="tools.html?tab=map" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                <line x1="8" y1="2" x2="8" y2="18" />
+                <line x1="16" y1="6" x2="16" y2="22" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module A &middot; Leaflet + OSM</p>
+            <h3 class="tool-hub-title">Interactive Travel Map</h3>
+            <p class="tool-hub-desc">
+              Explore all 16 destinations, inspect nearby attractions, and preview real road corridors via OSRM routing.
+            </p>
+            <span class="tool-hub-link">Launch Map &rarr;</span>
+          </a>
+
+          <a href="tools.html?tab=weather" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2" />
+                <path d="M12 20v2" />
+                <path d="m4.93 4.93 1.41 1.41" />
+                <path d="m17.66 17.66 1.41 1.41" />
+                <path d="M2 12h2" />
+                <path d="M20 12h2" />
+                <path d="m6.34 17.66-1.41 1.41" />
+                <path d="m19.07 4.93-1.41 1.41" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module B &middot; Open-Meteo API</p>
+            <h3 class="tool-hub-title">Weather Information</h3>
+            <p class="tool-hub-desc">
+              Search any destination for live temperature, rain chances, 7-day forecast cards, and packing suggestions.
+            </p>
+            <span class="tool-hub-link">Check Weather &rarr;</span>
+          </a>
+
+          <a href="tools.html?tab=stays" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 7v11m0-4h18m0 4v-8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z" />
+                <path d="M7 10V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module C &middot; Demo Catalog</p>
+            <h3 class="tool-hub-title">Hotel &amp; Stay Finder</h3>
+            <p class="tool-hub-desc">
+              Filter hotels, homestays, hostels, resorts, and heritage stays by budget tier, amenities, and area.
+            </p>
+            <span class="tool-hub-link">Browse Sample Stays &rarr;</span>
+          </a>
+
+          <a href="tools.html?tab=transport" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                <line x1="4" y1="22" x2="4" y2="15" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module D &middot; Demo Comparison</p>
+            <h3 class="tool-hub-title">Transportation Planner</h3>
+            <p class="tool-hub-desc">
+              Compare indicative train, bus, flight, and private cab durations and costs between Indian cities.
+            </p>
+            <span class="tool-hub-link">Compare Modes &rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         8B. TRAVEL GUIDES, HIDDEN GEMS & SAFETY HUB
+         ========================================================= -->
+    <section class="section guides-hub-section" id="guides-hub" aria-labelledby="guides-hub-heading">
+      <div class="container">
+        <div class="section-header-row">
+          <div class="section-heading-block">
+            <p class="section-kicker" data-i18n="home.guidesKicker">Offbeat, Safe &amp; Responsible Travel</p>
+            <h2 class="section-title" id="guides-hub-heading" data-i18n="home.guidesTitle">Guides, Hidden Gems &amp; Community</h2>
+            <p class="section-lead" data-i18n="home.guidesLead">
+              Go beyond headline circuits with budget-friendly hidden gems, verified Indian emergency helplines, responsible travel tips, and traveler reviews.
+            </p>
+          </div>
+          <div>
+            <a href="guides.html" class="btn btn-primary" data-i18n="home.guidesCta">Open Guides Hub &rarr;</a>
+          </div>
+        </div>
+
+        <div class="tools-hub-grid">
+          <a href="guides.html?tab=gems" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 19 9 12 22 5 9 12 2" />
+                <line x1="5" y1="9" x2="19" y2="9" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module 01 &middot; Offbeat India</p>
+            <h3 class="tool-hub-title" data-i18n="nav.gems">Hidden Gems Explorer</h3>
+            <p class="tool-hub-desc">
+              Explore Ziro Valley, Spiti, Majuli, Bundi, Chettinad, and Gokarna with local experiences and gentle budget estimates.
+            </p>
+            <span class="tool-hub-link">Discover Hidden Gems &rarr;</span>
+          </a>
+
+          <a href="guides.html?tab=safety" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module 02 &middot; Preparedness</p>
+            <h3 class="tool-hub-title" data-i18n="nav.safety">Travel Safety</h3>
+            <p class="tool-hub-desc">
+              Official Indian emergency numbers (112, 1363), travel document checklists, weather advisories, and live OpenStreetMap lookup.
+            </p>
+            <span class="tool-hub-link">Open Safety Guide &rarr;</span>
+          </a>
+
+          <a href="guides.html?tab=sustainable" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module 03 &middot; Eco-Conscious</p>
+            <h3 class="tool-hub-title" data-i18n="nav.sustainable">Sustainable Tourism</h3>
+            <p class="tool-hub-desc">
+              Eco-friendly destinations, community homestay suggestions, and an interactive responsible traveler pledge.
+            </p>
+            <span class="tool-hub-link">Explore Eco Travel &rarr;</span>
+          </a>
+
+          <a href="guides.html?tab=reviews" class="tool-hub-card">
+            <div class="tool-hub-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </div>
+            <p class="tool-hub-kicker">Module 04 &middot; Star Ratings</p>
+            <h3 class="tool-hub-title" data-i18n="nav.reviews">Reviews &amp; Ratings</h3>
+            <p class="tool-hub-desc">
+              Read clearly labeled sample destination reviews, compare star breakdowns, and publish your own local review.
+            </p>
+            <span class="tool-hub-link">Read &amp; Write Reviews &rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         9. TESTIMONIALS (CLEARLY LABELLED SAMPLE TESTIMONIALS)
+         ========================================================= -->
+    <section class="section testimonials-section" aria-labelledby="testimonials-heading">
+      <div class="container">
+        <div class="section-header-row">
+          <div class="section-heading-block">
+            <p class="section-kicker">Sample Testimonials &middot; Illustrative Traveler Stories</p>
+            <h2 class="section-title" id="testimonials-heading" data-i18n="home.testimonialsTitle">How Travelers Shape Their Routes</h2>
+            <p class="section-lead">
+              The following sample testimonials illustrate how travelers use Yatra Sphere’s regional pacing and budget outlines.
+            </p>
+          </div>
+          <div>
+            <a href="guides.html?tab=reviews" class="btn-card-action">View All Reviews &amp; Ratings &rarr;</a>
+          </div>
+        </div>
+
+        <div class="testimonials-grid">
+          <blockquote class="testimonial-card">
+            <p class="testimonial-tag">Sample Testimonial &middot; Kashmir Circuit</p>
+            <p class="testimonial-quote">
+              “Having Srinagar, Gulmarg, and Pahalgam ordered by realistic drive times saved us an entire afternoon on the road, and the sample budget split matched our actual spend closely.”
+            </p>
+            <footer class="testimonial-author">
+              <strong>Aarav Mehta</strong>
+              <span>Architectural Photographer &middot; Pune (Sample Profile)</span>
+            </footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card">
+            <p class="testimonial-tag">Sample Testimonial &middot; Kerala Backwaters</p>
+            <p class="testimonial-quote">
+              “Instead of rushing five towns in four days, the route outline paired Munnar’s misty tea ridges with one calm night on the Alleppey backwaters. Every transition felt effortless.”
+            </p>
+            <footer class="testimonial-author">
+              <strong>Meera Nair</strong>
+              <span>Product Designer &middot; Bengaluru (Sample Profile)</span>
+            </footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card">
+            <p class="testimonial-tag">Sample Testimonial &middot; Jaipur Heritage</p>
+            <p class="testimonial-quote">
+              “Grouping Amber Fort early in the morning with old-city bazaars at dusk kept us ahead of midday heat and gave us clear time for local craft workshops.”
+            </p>
+            <footer class="testimonial-author">
+              <strong>Rohan Kulkarni</strong>
+              <span>Independent Consultant &middot; Mumbai (Sample Profile)</span>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       9. FOOTER
+       ========================================================= -->
+  <footer class="site-footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <a href="#home" class="brand-logo footer-brand">
+          <svg class="brand-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+            <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+            <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+            <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+          </svg>
+          <span class="brand-text">YATRA SPHERE</span>
+        </a>
+        <p class="footer-tagline" data-i18n="footer.tagline">Explore More. Experience Beyond.</p>
+        <p class="footer-about" data-i18n="footer.about">
+          Thoughtful travel discovery and intelligent itinerary planning across India’s mountains, coastlines, and heritage cities.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="#home" data-i18n="nav.home">Home</a></li>
+          <li><a href="explore.html" data-i18n="nav.explore">Explore Destinations</a></li>
+          <li><a href="planner.html" data-i18n="nav.planner">AI Trip Planner</a></li>
+          <li><a href="#route-planner" data-i18n="nav.routePlanner">Google Maps Route Planner</a></li>
+          <li><a href="tools.html" data-i18n="nav.tools">Travel Tools</a></li>
+          <li><a href="guides.html?tab=gems" data-i18n="nav.gems">Hidden Gems</a></li>
+          <li><a href="guides.html?tab=safety" data-i18n="nav.safety">Travel Safety</a></li>
+          <li><a href="guides.html?tab=sustainable" data-i18n="nav.sustainable">Sustainable Travel</a></li>
+          <li><a href="guides.html?tab=reviews" data-i18n="nav.reviews">Reviews &amp; Ratings</a></li>
+          <li><a href="assistant.html" data-i18n="nav.assistant">AI Travel Assistant</a></li>
+          <li><a href="dashboard.html" data-i18n="nav.dashboard">My Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Contact Information</h3>
+        <ul class="footer-contact">
+          <li><span>Email:</span> <a href="mailto:hello@yatrasphere.example">hello@yatrasphere.example</a></li>
+          <li><span>Phone:</span> <a href="tel:+911140000192">+91 11 4000 0192</a></li>
+          <li><span>Studio:</span> Connaught Place, New Delhi, India</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Connect &amp; Legal</h3>
+        <div class="social-links" aria-label="Social Media">
+          <button type="button" class="social-btn" data-social="Instagram" aria-label="Yatra Sphere on Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="X" aria-label="Yatra Sphere on X">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4l16 16" />
+              <path d="M20 4L4 20" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="YouTube" aria-label="Yatra Sphere on YouTube">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="4" />
+              <polygon points="10 9 16 12 10 15 10 9" />
+            </svg>
+          </button>
+        </div>
+        <ul class="footer-links legal-links">
+          <li><button type="button" class="footer-link-btn" data-legal="privacy">Privacy Policy</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="terms">Terms of Use</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="demo">Demo Data Notice</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span id="current-year">2026</span> Yatra Sphere. All rights reserved.</p>
+      <p class="footer-note">Homepage Foundation &middot; Simulated preview data clearly labeled.</p>
+    </div>
+  </footer>
+
+  <!-- =========================================================
+       INTERACTIVE MODALS (Auth Demo, Destination Guide, Legal)
+       ========================================================= -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Modal Title</h2>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamically populated by script.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Live feedback toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

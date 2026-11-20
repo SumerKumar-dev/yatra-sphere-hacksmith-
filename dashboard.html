@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traveler Dashboard — Yatra Sphere</title>
+  <meta name="description" content="Manage your personal Yatra Sphere travel workspace: upcoming trips, saved itineraries, previous trips, destination wishlist, packing checklist, and profile." />
+  <meta property="og:title" content="Traveler Dashboard — Yatra Sphere" />
+  <meta property="og:description" content="View upcoming and past trips, edit itineraries, track packing checklists, and update your Yatra Sphere profile." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="destinations-data.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="supabase-client.js" defer></script>
+  <script src="account-store.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="account.js" defer></script>
+  <script src="assistant.js" defer></script>
+</head>
+<body class="page-dashboard">
+  <a class="skip-link" href="#main-content" data-i18n="nav.skip">Skip to main content</a>
+
+  <header class="site-header scrolled" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-logo" aria-label="Yatra Sphere Home">
+        <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+          <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+          <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+        </svg>
+        <span class="brand-text">YATRA SPHERE</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="nav-link" data-i18n="nav.assistant">Assistant</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language switch">
+          <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिं</button>
+        </div>
+        <button type="button" class="btn btn-nav-cta" id="open-auth-btn" data-i18n="auth.myAccount">
+          My Account
+        </button>
+        <button
+          type="button"
+          class="mobile-menu-toggle"
+          id="mobile-menu-toggle"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          aria-label="Toggle navigation menu"
+        >
+          <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" hidden>
+      <nav class="mobile-nav-list" aria-label="Mobile Navigation">
+        <a href="index.html" class="mobile-nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="mobile-nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="mobile-nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="mobile-nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="mobile-nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="mobile-nav-link" data-i18n="nav.assistant">Assistant</a>
+        <a href="dashboard.html" class="mobile-nav-link" data-i18n="nav.dashboard">My Dashboard</a>
+        <div class="mobile-lang-row">
+          <span>Language / भाषा:</span>
+          <div class="lang-switch" role="group" aria-label="Language switch">
+            <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">English</button>
+            <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिन्दी</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary mobile-auth-btn" id="mobile-auth-btn" data-i18n="auth.myAccount">
+          My Account
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- =========================================================
+         DASHBOARD TOP BANNER
+         ========================================================= -->
+    <section class="explore-banner dashboard-page-banner" aria-labelledby="dashboard-page-title">
+      <div class="container">
+        <div class="explore-banner-grid">
+          <div>
+            <p class="hero-tagline">Personal Travel Workspace</p>
+            <h1 class="explore-page-title" id="dashboard-page-title" data-i18n="dashboard.title">Your Travel Dashboard</h1>
+            <p class="explore-page-subtitle" id="dashboard-banner-subtitle" data-i18n="dashboard.sub">
+              Organize upcoming routes, review saved itineraries, track your packing checklist, and manage your traveler profile.
+            </p>
+          </div>
+          <div class="explore-banner-actions">
+            <a href="planner.html" class="btn btn-wishlist-header">
+              <span>Plan New Trip &rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         UNAUTHENTICATED GATE (Shown when signed out)
+         ========================================================= -->
+    <section class="section dashboard-gate-section" id="dashboard-auth-gate" hidden aria-labelledby="auth-gate-heading">
+      <div class="container">
+        <div class="auth-gate-card">
+          <p class="section-kicker">Demo Session Required</p>
+          <h2 class="auth-gate-title" id="auth-gate-heading">Sign In to Open Your Travel Workspace</h2>
+          <p class="auth-gate-desc">
+            Your dashboard connects your saved itineraries, packing checklist progress, destination wishlist, and personal travel preferences in local browser storage.
+          </p>
+          <div class="auth-gate-actions">
+            <a href="login.html" class="btn btn-primary">Sign In</a>
+            <a href="signup.html" class="btn-card-action">Create Account</a>
+            <button type="button" class="btn-card-action" id="gate-demo-signin-btn">
+              Try Demo Traveler Session
+            </button>
+          </div>
+          <p class="auth-gate-note">
+            Frontend demonstration using <code>localStorage</code> only—structured for future Supabase Auth integration.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         AUTHENTICATED WORKSPACE
+         ========================================================= -->
+    <section class="section dashboard-workspace-section" id="dashboard-workspace" hidden aria-label="Personal travel management workspace">
+      <div class="container">
+        <div class="demo-mode-banner tools-demo-notice" id="dashboard-backend-banner" role="note">
+          <strong>Session Mode:</strong> Signed-in Supabase accounts synchronize live with PostgreSQL (13 tables) &amp; Storage (<code>profile-images</code>). Passwordless Demo Traveler &amp; offline mode preserve full <code>localStorage</code> fallback.
+        </div>
+
+        <div class="dashboard-shell">
+          <!-- Left Sidebar Navigation -->
+          <aside class="dashboard-sidebar" aria-label="Dashboard sections">
+            <div class="sidebar-profile-box">
+              <div class="sidebar-avatar" id="sidebar-user-avatar" aria-hidden="true">YS</div>
+              <div class="sidebar-user-meta">
+                <strong class="sidebar-user-name" id="sidebar-user-name">Traveler</strong>
+                <span class="sidebar-user-email" id="sidebar-user-email">traveler@example.com</span>
+              </div>
+            </div>
+
+            <nav class="dashboard-nav-list" role="tablist" aria-label="Personal management views">
+              <button type="button" class="dash-nav-btn active" role="tab" aria-selected="true" data-dash-tab="overview" id="dash-tab-overview">
+                Dashboard Overview
+              </button>
+              <button type="button" class="dash-nav-btn" role="tab" aria-selected="false" data-dash-tab="trips" id="dash-tab-trips">
+                My Trips
+              </button>
+              <button type="button" class="dash-nav-btn" role="tab" aria-selected="false" data-dash-tab="checklist" id="dash-tab-checklist">
+                Travel Checklist
+              </button>
+              <button type="button" class="dash-nav-btn" role="tab" aria-selected="false" data-dash-tab="profile" id="dash-tab-profile">
+                Profile &amp; Settings
+              </button>
+            </nav>
+
+            <div class="sidebar-quick-links">
+              <p class="sidebar-links-heading">Shortcuts</p>
+              <a href="planner.html" class="sidebar-ext-link">Open AI Trip Planner &rarr;</a>
+              <a href="explore.html" class="sidebar-ext-link">Browse 16 Destinations &rarr;</a>
+              <a href="tools.html" class="sidebar-ext-link">Maps, Weather &amp; Stays &rarr;</a>
+            </div>
+
+            <button type="button" class="btn-card-action sidebar-logout-btn" id="sidebar-logout-btn">
+              Log Out
+            </button>
+          </aside>
+
+          <!-- Main Content Panels -->
+          <div class="dashboard-main">
+
+            <!-- =================================================
+                 VIEW 1: USER DASHBOARD OVERVIEW
+                 ================================================= -->
+            <div class="dash-panel" id="dash-panel-overview" role="tabpanel" aria-labelledby="dash-tab-overview">
+              <div class="dash-welcome-header">
+                <div>
+                  <p class="section-kicker" id="dash-welcome-kicker">Traveler Overview</p>
+                  <h2 class="dash-panel-title" id="dash-welcome-heading">Welcome back</h2>
+                  <p class="dash-panel-desc" id="dash-welcome-sub"></p>
+                </div>
+                <div class="dash-welcome-actions">
+                  <button type="button" class="btn-card-action" data-jump-tab="profile">Edit Profile</button>
+                  <a href="planner.html" class="btn btn-primary">Plan New Trip</a>
+                </div>
+              </div>
+
+              <!-- 4-Column Tabular KPI Strip -->
+              <div class="dash-kpi-grid" id="dash-kpi-grid">
+                <!-- Populated by account.js -->
+              </div>
+
+              <!-- Profile Snapshot Card -->
+              <section class="dash-block" aria-labelledby="overview-profile-heading">
+                <div class="dash-block-header">
+                  <h3 class="dash-block-title" id="overview-profile-heading">Profile Information</h3>
+                  <button type="button" class="btn-link" data-jump-tab="profile">Manage Profile</button>
+                </div>
+                <div class="dash-profile-summary-grid" id="overview-profile-summary">
+                  <!-- Populated by account.js -->
+                </div>
+              </section>
+
+              <!-- Upcoming Trips -->
+              <section class="dash-block" aria-labelledby="overview-upcoming-heading">
+                <div class="dash-block-header">
+                  <h3 class="dash-block-title" id="overview-upcoming-heading">Upcoming Trips</h3>
+                  <button type="button" class="btn-link" data-jump-tab="trips">Manage All Trips</button>
+                </div>
+                <div class="dash-trips-grid" id="overview-upcoming-list">
+                  <!-- Populated by account.js -->
+                </div>
+              </section>
+
+              <!-- Saved Itineraries -->
+              <section class="dash-block" aria-labelledby="overview-saved-heading">
+                <div class="dash-block-header">
+                  <h3 class="dash-block-title" id="overview-saved-heading">Saved Itineraries</h3>
+                  <a href="planner.html" class="btn-link">Create in Trip Planner</a>
+                </div>
+                <div class="dash-itineraries-table-wrap" id="overview-saved-list">
+                  <!-- Populated by account.js -->
+                </div>
+              </section>
+
+              <!-- Previous Trips -->
+              <section class="dash-block" aria-labelledby="overview-previous-heading">
+                <div class="dash-block-header">
+                  <h3 class="dash-block-title" id="overview-previous-heading">Previous Trips</h3>
+                  <button type="button" class="btn-link" data-jump-tab="trips">View History</button>
+                </div>
+                <div class="dash-trips-grid" id="overview-previous-list">
+                  <!-- Populated by account.js -->
+                </div>
+              </section>
+
+              <!-- Saved Wishlist -->
+              <section class="dash-block" aria-labelledby="overview-wishlist-heading">
+                <div class="dash-block-header">
+                  <h3 class="dash-block-title" id="overview-wishlist-heading">Saved Wishlist Destinations</h3>
+                  <a href="explore.html" class="btn-link">Explore Catalog</a>
+                </div>
+                <div class="dash-wishlist-grid" id="overview-wishlist-grid">
+                  <!-- Populated by account.js -->
+                </div>
+              </section>
+            </div>
+
+            <!-- =================================================
+                 VIEW 2: MY TRIPS (View, Edit, Delete Saved Trips)
+                 ================================================= -->
+            <div class="dash-panel" id="dash-panel-trips" role="tabpanel" aria-labelledby="dash-tab-trips" hidden>
+              <div class="dash-welcome-header">
+                <div>
+                  <p class="section-kicker">Saved Journeys</p>
+                  <h2 class="dash-panel-title">My Trips &amp; Itineraries</h2>
+                  <p class="dash-panel-desc">
+                    Inspect day-by-day plans, edit trip dates, budgets, or traveler counts, log completed routes, or remove trips you no longer need.
+                  </p>
+                </div>
+                <div class="dash-welcome-actions">
+                  <button type="button" class="btn-card-action" id="seed-sample-trips-btn">Load Sample Trips</button>
+                  <button type="button" class="btn btn-primary" id="open-add-trip-btn">+ Add New Trip</button>
+                </div>
+              </div>
+
+              <div class="trips-toolbar">
+                <div class="context-segmented trips-filter-tabs" role="tablist" aria-label="Filter trips by status">
+                  <button type="button" class="context-seg-btn active" role="tab" aria-selected="true" data-trip-filter="all">All Trips</button>
+                  <button type="button" class="context-seg-btn" role="tab" aria-selected="false" data-trip-filter="upcoming">Upcoming</button>
+                  <button type="button" class="context-seg-btn" role="tab" aria-selected="false" data-trip-filter="completed">Previous</button>
+                </div>
+                <div class="trips-search-box">
+                  <label for="trips-search-input" class="sr-only">Search saved trips</label>
+                  <input
+                    type="search"
+                    id="trips-search-input"
+                    class="weather-input"
+                    placeholder="Filter by destination, origin, or notes..."
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+
+              <div class="my-trips-stack" id="my-trips-list">
+                <!-- Populated by account.js -->
+              </div>
+
+              <div class="empty-results" id="my-trips-empty" hidden>
+                <h3>No saved trips match your view</h3>
+                <p>Generate a day-wise route in the AI Smart Trip Planner, add a trip manually, or load sample trips to explore.</p>
+                <div class="empty-actions-row">
+                  <a href="planner.html" class="btn btn-primary">Open Trip Planner</a>
+                  <button type="button" class="btn-card-action" id="empty-add-trip-btn">+ Add Trip Manually</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- =================================================
+                 VIEW 3: TRAVEL CHECKLIST
+                 ================================================= -->
+            <div class="dash-panel" id="dash-panel-checklist" role="tabpanel" aria-labelledby="dash-tab-checklist" hidden>
+              <div class="dash-welcome-header">
+                <div>
+                  <p class="section-kicker">Packing Companion</p>
+                  <h2 class="dash-panel-title">Travel Packing Checklist</h2>
+                  <p class="dash-panel-desc">
+                    Add custom packing items, mark items packed, load regional gear presets, and save progress locally in your browser.
+                  </p>
+                </div>
+                <div class="dash-welcome-actions">
+                  <button type="button" class="btn btn-primary" id="save-checklist-btn">Save Checklist Progress</button>
+                </div>
+              </div>
+
+              <!-- Progress Summary -->
+              <div class="checklist-progress-card">
+                <div class="checklist-progress-top">
+                  <div>
+                    <strong class="checklist-progress-title" id="checklist-progress-text">0 of 0 items packed (0%)</strong>
+                    <span class="checklist-saved-meta" id="checklist-last-saved">Not saved yet</span>
+                  </div>
+                  <div class="checklist-preset-actions">
+                    <button type="button" class="preset-btn" data-checklist-preset="mountains">+ Mountain Gear</button>
+                    <button type="button" class="preset-btn" data-checklist-preset="beaches">+ Coastal Gear</button>
+                    <button type="button" class="preset-btn" data-checklist-preset="heritage">+ Heritage Gear</button>
+                  </div>
+                </div>
+                <div class="checklist-bar-track" aria-hidden="true">
+                  <div class="checklist-bar-fill" id="checklist-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Add Custom Item Form -->
+              <form class="checklist-add-form" id="checklist-add-form" novalidate>
+                <div class="form-field">
+                  <label for="checklist-item-input">Add Custom Item</label>
+                  <input
+                    type="text"
+                    id="checklist-item-input"
+                    placeholder="e.g. Trekking poles, camera battery, mosquito repellent..."
+                    maxlength="120"
+                    required
+                  />
+                </div>
+                <div class="form-field">
+                  <label for="checklist-category-select">Category</label>
+                  <select id="checklist-category-select">
+                    <option value="Essentials">Essentials</option>
+                    <option value="Documents">Documents</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Tech &amp; Health">Tech &amp; Health</option>
+                    <option value="Destination Gear">Destination Gear</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="checklist-trip-select">Trip Tag</label>
+                  <select id="checklist-trip-select">
+                    <option value="General Travel">General Travel</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Item</button>
+              </form>
+
+              <!-- Checklist Filters -->
+              <div class="checklist-filter-bar">
+                <div class="context-segmented" role="tablist" aria-label="Checklist completion filter">
+                  <button type="button" class="context-seg-btn active" role="tab" aria-selected="true" data-checklist-status="all">All</button>
+                  <button type="button" class="context-seg-btn" role="tab" aria-selected="false" data-checklist-status="pending">Remaining</button>
+                  <button type="button" class="context-seg-btn" role="tab" aria-selected="false" data-checklist-status="done">Packed</button>
+                </div>
+
+                <div class="checklist-filter-right">
+                  <label for="checklist-filter-category" class="sr-only">Filter by category</label>
+                  <select id="checklist-filter-category" class="tools-select">
+                    <option value="all">All Categories</option>
+                    <option value="Essentials">Essentials</option>
+                    <option value="Documents">Documents</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Tech &amp; Health">Tech &amp; Health</option>
+                    <option value="Destination Gear">Destination Gear</option>
+                  </select>
+                  <button type="button" class="btn-link" id="clear-completed-checklist-btn">Remove Packed</button>
+                </div>
+              </div>
+
+              <div class="checklist-items-list" id="checklist-items-list">
+                <!-- Populated by account.js -->
+              </div>
+
+              <div class="empty-results" id="checklist-empty-state" hidden>
+                <h3>No checklist items in this view</h3>
+                <p>Add a custom item above or load a regional packing preset to get started.</p>
+              </div>
+            </div>
+
+            <!-- =================================================
+                 VIEW 4: PROFILE & SETTINGS
+                 ================================================= -->
+            <div class="dash-panel" id="dash-panel-profile" role="tabpanel" aria-labelledby="dash-tab-profile" hidden>
+              <div class="dash-welcome-header">
+                <div>
+                  <p class="section-kicker">Account Settings</p>
+                  <h2 class="dash-panel-title">Profile &amp; Preferences</h2>
+                  <p class="dash-panel-desc">
+                    Update your traveler profile details, default origin city, and travel style preferences.
+                  </p>
+                </div>
+                <div class="dash-welcome-actions">
+                  <button type="button" class="btn-card-action" id="profile-logout-btn">Log Out</button>
+                </div>
+              </div>
+
+              <div class="profile-layout-grid">
+                <form class="dash-block profile-form" id="profile-edit-form" novalidate>
+                  <h3 class="dash-block-title">Edit Personal Information</h3>
+                  <div class="auth-form-alert" id="profile-form-error" role="alert" hidden></div>
+
+                  <div class="wizard-fields-grid">
+                    <div class="form-field field-full">
+                      <label for="profile-avatar-file">Profile Photo (Supabase Storage · <code>profile-images</code>)</label>
+                      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                        <div class="sidebar-avatar" id="profile-avatar-preview" aria-hidden="true">YS</div>
+                        <div>
+                          <input type="file" id="profile-avatar-file" accept="image/jpeg,image/png,image/webp,image/gif" />
+                          <p class="field-hint" style="margin:4px 0 0;font-size:12px;color:#52667a;">Max 5 MB (JPEG, PNG, WebP). Uploads to your owner folder when signed in with Supabase.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-field">
+                      <label for="profile-name">Full Name</label>
+                      <input type="text" id="profile-name" required />
+                    </div>
+                    <div class="form-field">
+                      <label for="profile-email">Email Address</label>
+                      <input type="email" id="profile-email" required />
+                    </div>
+                    <div class="form-field">
+                      <label for="profile-city">Home / Default Origin City</label>
+                      <input type="text" id="profile-city" placeholder="New Delhi" />
+                    </div>
+                    <div class="form-field">
+                      <label for="profile-phone">Phone Number (Optional)</label>
+                      <input type="tel" id="profile-phone" placeholder="+91 98100 00000" />
+                    </div>
+                    <div class="form-field">
+                      <label for="profile-travel-type">Preferred Travel Type</label>
+                      <select id="profile-travel-type">
+                        <option value="Solo">Solo</option>
+                        <option value="Friends">Friends</option>
+                        <option value="Family">Family</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="profile-dietary">Dietary / Accessibility Notes</label>
+                      <input type="text" id="profile-dietary" placeholder="e.g. Vegetarian, step-free stays" />
+                    </div>
+                    <div class="form-field field-full">
+                      <label for="profile-bio">Travel Bio &amp; Pacing Notes</label>
+                      <textarea id="profile-bio" rows="3" placeholder="Share your preferred travel pace, photography stops, or scenic interests..."></textarea>
+                    </div>
+                  </div>
+
+                  <div class="profile-form-actions">
+                    <button type="submit" class="btn btn-primary">Save Personal Information</button>
+                    <span class="profile-save-status" id="profile-save-status" aria-live="polite"></span>
+                  </div>
+                </form>
+
+                <aside class="dash-block supabase-arch-card" aria-label="Backend integration">
+                  <p class="section-kicker">Supabase Connected Architecture</p>
+                  <h3 class="dash-block-title">Database &amp; Storage Sync</h3>
+                  <p class="dash-panel-desc">
+                    Account, trip, route stop, wishlist, and checklist updates route through <code>window.YatraAccountStore</code> + <code>window.YatraSupabase</code>:
+                  </p>
+                  <ul class="arch-mapping-list">
+                    <li><strong>auth</strong> &rarr; <code>supabase.auth</code> + JWT session</li>
+                    <li><strong>profile</strong> &rarr; <code>public.profiles</code> + <code>profile-images</code> bucket</li>
+                    <li><strong>trips</strong> &rarr; <code>public.trips</code>, <code>trip_stops</code>, <code>itineraries</code> &amp; <code>budgets</code></li>
+                    <li><strong>checklist</strong> &rarr; <code>public.packing_checklists</code></li>
+                    <li><strong>wishlist &amp; reviews</strong> &rarr; <code>public.wishlists</code> &amp; <code>public.reviews</code></li>
+                  </ul>
+                  <div class="profile-session-footer">
+                    <button type="button" class="btn-card-action" id="profile-logout-secondary-btn">Log Out of Session</button>
+                  </div>
+                </aside>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <a href="index.html" class="brand-logo footer-brand">
+          <svg class="brand-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+            <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+            <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+            <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+          </svg>
+          <span class="brand-text">YATRA SPHERE</span>
+        </a>
+        <p class="footer-tagline">Explore More. Experience Beyond.</p>
+        <p class="footer-about">
+          Thoughtful travel discovery and intelligent itinerary planning across India’s mountains, coastlines, and heritage cities.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="explore.html" data-i18n="nav.explore">Explore Destinations</a></li>
+          <li><a href="planner.html" data-i18n="nav.planner">AI Trip Planner</a></li>
+          <li><a href="tools.html" data-i18n="nav.tools">Travel Tools</a></li>
+          <li><a href="guides.html?tab=gems" data-i18n="nav.gems">Hidden Gems</a></li>
+          <li><a href="guides.html?tab=safety" data-i18n="nav.safety">Travel Safety</a></li>
+          <li><a href="assistant.html" data-i18n="nav.assistant">AI Travel Assistant</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Contact Information</h3>
+        <ul class="footer-contact">
+          <li><span>Email:</span> <a href="mailto:hello@yatrasphere.example">hello@yatrasphere.example</a></li>
+          <li><span>Phone:</span> <a href="tel:+911140000192">+91 11 4000 0192</a></li>
+          <li><span>Studio:</span> Connaught Place, New Delhi, India</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Connect &amp; Legal</h3>
+        <ul class="footer-links legal-links">
+          <li><button type="button" class="footer-link-btn" data-legal="privacy">Privacy Policy</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="terms">Terms of Use</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="demo">Demo Data Notice</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span id="current-year">2026</span> Yatra Sphere. All rights reserved.</p>
+      <p class="footer-note">Traveler Dashboard &middot; Frontend localStorage demo structured for Supabase integration.</p>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-dialog modal-dialog-wide" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Dialog</h2>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

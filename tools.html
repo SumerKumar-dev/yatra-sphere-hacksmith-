@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Tools — Yatra Sphere</title>
+  <meta name="description" content="Explore Yatra Sphere's Travel Tools: Interactive OpenStreetMap destination map, live weather forecast, illustrative hotel and stay finder, and multi-mode transportation planner." />
+  <meta property="og:title" content="Travel Tools — Yatra Sphere" />
+  <meta property="og:description" content="Interactive destination map, weather insights, stay finder, and train, bus, flight, and cab route comparison across India." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet CSS for Interactive OpenStreetMap -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer crossorigin=""></script>
+  <script src="destinations-data.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="supabase-client.js" defer></script>
+  <script src="account-store.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="assistant.js" defer></script>
+  <script src="tools.js" defer></script>
+</head>
+<body class="page-tools">
+  <a class="skip-link" href="#main-content" data-i18n="nav.skip">Skip to main content</a>
+
+  <!-- =========================================================
+       NAVIGATION BAR (3-Zone Single-Row Contract)
+       ========================================================= -->
+  <header class="site-header scrolled" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-logo" aria-label="Yatra Sphere Home">
+        <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+          <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+          <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+        </svg>
+        <span class="brand-text">YATRA SPHERE</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="nav-link active" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="nav-link" data-i18n="nav.assistant">Assistant</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language switch">
+          <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिं</button>
+        </div>
+        <button type="button" class="btn btn-nav-cta" id="open-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+        <button
+          type="button"
+          class="mobile-menu-toggle"
+          id="mobile-menu-toggle"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          aria-label="Toggle navigation menu"
+        >
+          <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" hidden>
+      <nav class="mobile-nav-list" aria-label="Mobile Navigation">
+        <a href="index.html" class="mobile-nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="mobile-nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="mobile-nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="mobile-nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="mobile-nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="mobile-nav-link" data-i18n="nav.assistant">Assistant</a>
+        <a href="dashboard.html" class="mobile-nav-link" data-i18n="nav.dashboard">My Dashboard</a>
+        <div class="mobile-lang-row">
+          <span>Language / भाषा:</span>
+          <div class="lang-switch" role="group" aria-label="Language switch">
+            <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">English</button>
+            <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिन्दी</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary mobile-auth-btn" id="mobile-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- =========================================================
+         TRAVEL TOOLS HEADER BANNER
+         ========================================================= -->
+    <section class="explore-banner tools-page-banner" aria-labelledby="tools-page-title">
+      <div class="container">
+        <div class="explore-banner-grid">
+          <div>
+            <p class="hero-tagline" data-i18n="hero.tagline">Explore More. Experience Beyond.</p>
+            <h1 class="explore-page-title" id="tools-page-title" data-i18n="tools.title">Travel Tools &amp; Route Utilities</h1>
+            <p class="explore-page-subtitle" data-i18n="tools.sub">
+              Inspect destinations on an interactive OpenStreetMap view, check live 7-day weather forecasts, browse illustrative stay options, and compare train, bus, flight, and cab corridors.
+            </p>
+          </div>
+          <div class="explore-banner-actions">
+            <a href="planner.html" class="btn btn-wishlist-header" id="tools-open-planner-link">
+              <span>Plan Selected Route &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Global Route Context Bar + Module Tabs -->
+        <div class="tools-control-strip">
+          <div class="tools-route-selectors">
+            <div class="tools-select-field">
+              <label for="tools-origin-select">Origin City</label>
+              <select id="tools-origin-select" class="tools-select">
+                <option value="New Delhi">New Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bengaluru">Bengaluru</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Pune">Pune</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Guwahati">Guwahati</option>
+              </select>
+            </div>
+
+            <div class="tools-select-field">
+              <label for="tools-destination-select">Destination</label>
+              <select id="tools-destination-select" class="tools-select">
+                <!-- Populated dynamically from destinations-data.js -->
+              </select>
+            </div>
+          </div>
+
+          <div class="tools-module-tabs" role="tablist" aria-label="Travel Tools Modules">
+            <button type="button" class="tools-tab-btn active" role="tab" aria-selected="true" data-tools-tab="map" id="tab-btn-map">
+              Interactive Map
+            </button>
+            <button type="button" class="tools-tab-btn" role="tab" aria-selected="false" data-tools-tab="weather" id="tab-btn-weather">
+              Weather Info
+            </button>
+            <button type="button" class="tools-tab-btn" role="tab" aria-selected="false" data-tools-tab="stays" id="tab-btn-stays">
+              Hotel &amp; Stay Finder
+            </button>
+            <button type="button" class="tools-tab-btn" role="tab" aria-selected="false" data-tools-tab="transport" id="tab-btn-transport">
+              Transport Planner
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WORKSPACE MODULES
+         ========================================================= -->
+    <section class="section tools-workspace-section" aria-label="Travel tools workspace">
+      <div class="container">
+
+        <!-- =====================================================
+             MODULE A: INTERACTIVE TRAVEL MAP
+             ===================================================== -->
+        <div class="tools-panel" id="tools-panel-map" role="tabpanel" aria-labelledby="tab-btn-map">
+          <div class="tools-panel-header">
+            <div>
+              <p class="section-kicker">Module A &middot; OpenStreetMap + Leaflet</p>
+              <h2 class="tools-panel-title" id="map-panel-title">Interactive Destination &amp; Route Map</h2>
+              <p class="tools-panel-desc">
+                Click any destination pin on the map or select attractions below to inspect coordinates, nearby excursions, and road corridor routing via OSRM.
+              </p>
+            </div>
+            <div class="tools-map-actions">
+              <button type="button" class="btn-card-action" id="map-fit-all-btn">Show All 16 Pins</button>
+              <button type="button" class="btn-card-action" id="map-fit-route-btn">Fit Origin &rarr; Route</button>
+            </div>
+          </div>
+
+          <div class="map-workspace-grid">
+            <div class="map-canvas-wrap">
+              <div id="yatra-leaflet-map" class="yatra-leaflet-map" aria-label="Interactive tourist destination map of India"></div>
+              <div id="map-fallback-box" class="map-fallback-box" hidden></div>
+              <div class="map-legend-bar">
+                <span><strong>Pins:</strong> Teal = Selected destination &middot; Navy = Other destinations &middot; Emerald = Local sights &amp; nearby attractions</span>
+                <span id="map-route-status" class="map-route-status">Loading route geometry...</span>
+              </div>
+            </div>
+
+            <aside class="map-side-panel" aria-label="Destination map details">
+              <div class="map-route-card" id="map-route-summary">
+                <!-- Populated dynamically by tools.js -->
+              </div>
+
+              <div class="map-spots-block">
+                <h3 class="map-spots-heading">Attractions &amp; Nearby Stops</h3>
+                <p class="map-spots-hint">Select a stop to focus it on the map.</p>
+                <div class="map-spots-list" id="map-spots-list">
+                  <!-- Populated dynamically by tools.js -->
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             MODULE B: WEATHER INFORMATION
+             ===================================================== -->
+        <div class="tools-panel" id="tools-panel-weather" role="tabpanel" aria-labelledby="tab-btn-weather" hidden>
+          <div class="tools-panel-header">
+            <div>
+              <p class="section-kicker">Module B &middot; Live Open-Meteo Forecast</p>
+              <h2 class="tools-panel-title">Destination Weather &amp; Rain Forecast</h2>
+              <p class="tools-panel-desc">
+                Search any city or switch destinations above to view live temperature, weather conditions, rain probability, 7-day weekly outlook, and packing/pacing tips.
+              </p>
+            </div>
+          </div>
+
+          <form class="weather-search-bar" id="weather-search-form" role="search" aria-label="Search weather by destination or city">
+            <div class="weather-search-field">
+              <label for="weather-city-input" class="sr-only">Search any city or destination for weather</label>
+              <input
+                type="search"
+                id="weather-city-input"
+                class="weather-input"
+                placeholder="Search any city or destination (e.g. Manali, Leh, Kochi, Gangtok, Pune)..."
+                autocomplete="off"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary" id="weather-search-btn">Check Weather</button>
+            <button type="button" class="btn-card-action" id="weather-sync-dest-btn">Use Selected Destination</button>
+          </form>
+
+          <div class="weather-status-banner" id="weather-status-banner" hidden role="status"></div>
+
+          <div id="weather-content-area" aria-live="polite">
+            <!-- Populated dynamically by tools.js -->
+          </div>
+        </div>
+
+        <!-- =====================================================
+             MODULE C: HOTEL AND STAY FINDER
+             ===================================================== -->
+        <div class="tools-panel" id="tools-panel-stays" role="tabpanel" aria-labelledby="tab-btn-stays" hidden>
+          <div class="tools-panel-header">
+            <div>
+              <p class="section-kicker">Module C &middot; Illustrative Stay Directory</p>
+              <h2 class="tools-panel-title">Hotel &amp; Stay Finder</h2>
+              <p class="tools-panel-desc">
+                Browse curated accommodation types, neighborhood locations, sample nightly budget bands, and amenities across India.
+              </p>
+            </div>
+          </div>
+
+          <div class="demo-mode-banner tools-demo-notice" role="note">
+            <strong>Illustrative Sample Directory (Demo Data):</strong> Nightly INR price ranges, property examples, and amenities are representative planning references—not live hotel availability or real-time booking rates.
+          </div>
+
+          <!-- Stay Filters Toolbar -->
+          <div class="stays-filter-bar" role="region" aria-label="Filter hotels and stays">
+            <div class="stays-filter-row">
+              <div class="tools-select-field">
+                <label for="stays-scope-select">Location Scope</label>
+                <select id="stays-scope-select" class="tools-select">
+                  <option value="selected">Selected Destination Only</option>
+                  <option value="all">All 16 Destinations</option>
+                </select>
+              </div>
+
+              <div class="tools-select-field">
+                <label for="stays-type-select">Accommodation Type</label>
+                <select id="stays-type-select" class="tools-select">
+                  <option value="all">All Stay Types</option>
+                  <option value="Hotel">Hotel</option>
+                  <option value="Homestay">Homestay</option>
+                  <option value="Resort">Resort</option>
+                  <option value="Hostel">Hostel</option>
+                  <option value="Heritage Stay">Heritage Stay / Houseboat</option>
+                </select>
+              </div>
+
+              <div class="tools-select-field">
+                <label for="stays-budget-select">Nightly Budget</label>
+                <select id="stays-budget-select" class="tools-select">
+                  <option value="all">All Budgets</option>
+                  <option value="low">Under ₹2,500 / night</option>
+                  <option value="mid">₹2,500 – ₹6,000 / night</option>
+                  <option value="high">Above ₹6,000 / night</option>
+                </select>
+              </div>
+
+              <div class="tools-select-field">
+                <label for="stays-sort-select">Sort By</label>
+                <select id="stays-sort-select" class="tools-select">
+                  <option value="recommended">Recommended</option>
+                  <option value="price-asc">Sample Price: Low to High</option>
+                  <option value="price-desc">Sample Price: High to Low</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="stays-amenities-row" role="group" aria-label="Filter by amenities">
+              <span class="stays-amenities-label">Amenities:</span>
+              <label class="amenity-check"><input type="checkbox" name="stayAmenity" value="Wi-Fi" /><span>Wi-Fi</span></label>
+              <label class="amenity-check"><input type="checkbox" name="stayAmenity" value="Breakfast" /><span>Breakfast Included</span></label>
+              <label class="amenity-check"><input type="checkbox" name="stayAmenity" value="Scenic View" /><span>Scenic View</span></label>
+              <label class="amenity-check"><input type="checkbox" name="stayAmenity" value="Family Friendly" /><span>Family Friendly</span></label>
+              <label class="amenity-check"><input type="checkbox" name="stayAmenity" value="Parking" /><span>Parking</span></label>
+              <button type="button" class="btn-link" id="stays-reset-btn" hidden>Reset Stay Filters</button>
+            </div>
+          </div>
+
+          <p class="stays-results-count" id="stays-results-count"></p>
+
+          <div class="stays-grid" id="stays-grid">
+            <!-- Populated dynamically by tools.js -->
+          </div>
+
+          <div class="empty-results" id="stays-empty-state" hidden>
+            <h3>No sample stays match those filters</h3>
+            <p>Try expanding to All Stay Types, adjusting your nightly budget band, or clearing amenity filters.</p>
+            <button type="button" class="btn btn-primary" id="stays-empty-reset-btn">Reset Stay Filters</button>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             MODULE D: TRANSPORTATION PLANNER
+             ===================================================== -->
+        <div class="tools-panel" id="tools-panel-transport" role="tabpanel" aria-labelledby="tab-btn-transport" hidden>
+          <div class="tools-panel-header">
+            <div>
+              <p class="section-kicker">Module D &middot; Multi-Mode Transit Comparison</p>
+              <h2 class="tools-panel-title">Transportation Planner</h2>
+              <p class="tools-panel-desc">
+                Compare Train, Bus, Flight, and Private Cab options between your origin city and destination with distance-based duration and group cost estimates.
+              </p>
+            </div>
+          </div>
+
+          <div class="demo-mode-banner tools-demo-notice" role="note">
+            <strong>Illustrative Transit Estimates (Demo Data):</strong> Travel durations, hub connections, and INR fare ranges are calculated from route distance and regional geography—they do not reflect live train, bus, airline, or taxi schedules.
+          </div>
+
+          <div class="transport-controls-bar">
+            <div class="tools-select-field">
+              <label for="transport-travelers-input">Travellers (1–12)</label>
+              <input type="number" id="transport-travelers-input" class="tools-select" min="1" max="12" value="2" />
+            </div>
+
+            <div class="tools-select-field">
+              <label for="transport-priority-select">Priority Focus</label>
+              <select id="transport-priority-select" class="tools-select">
+                <option value="balanced">Balanced (Time &amp; Cost)</option>
+                <option value="fastest">Fastest Arrival</option>
+                <option value="budget">Lowest Fare Per Person</option>
+              </select>
+            </div>
+
+            <div class="transport-corridor-summary" id="transport-corridor-summary">
+              <!-- Populated dynamically by tools.js -->
+            </div>
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="transport-table-wrap">
+            <table class="transport-comparison-table" aria-label="Transportation mode comparison">
+              <thead>
+                <tr>
+                  <th>Mode</th>
+                  <th>Typical Hub &amp; Route</th>
+                  <th>Est. Duration</th>
+                  <th>Est. Cost / Person</th>
+                  <th>Group Estimate</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody id="transport-table-body">
+                <!-- Populated dynamically by tools.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Detailed Mode Cards (Train, Bus, Flight, Cab) -->
+          <div class="transport-cards-grid" id="transport-cards-grid">
+            <!-- Populated dynamically by tools.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="site-footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <a href="index.html" class="brand-logo footer-brand">
+          <svg class="brand-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+            <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+            <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+            <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+          </svg>
+          <span class="brand-text">YATRA SPHERE</span>
+        </a>
+        <p class="footer-tagline">Explore More. Experience Beyond.</p>
+        <p class="footer-about">
+          Thoughtful travel discovery and intelligent itinerary planning across India’s mountains, coastlines, and heritage cities.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="explore.html" data-i18n="nav.explore">Explore Destinations</a></li>
+          <li><a href="planner.html" data-i18n="nav.planner">AI Trip Planner</a></li>
+          <li><a href="tools.html" data-i18n="nav.tools">Travel Tools</a></li>
+          <li><a href="guides.html?tab=gems" data-i18n="nav.gems">Hidden Gems</a></li>
+          <li><a href="guides.html?tab=safety" data-i18n="nav.safety">Travel Safety</a></li>
+          <li><a href="assistant.html" data-i18n="nav.assistant">AI Travel Assistant</a></li>
+          <li><a href="dashboard.html" data-i18n="nav.dashboard">My Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Contact Information</h3>
+        <ul class="footer-contact">
+          <li><span>Email:</span> <a href="mailto:hello@yatrasphere.example">hello@yatrasphere.example</a></li>
+          <li><span>Phone:</span> <a href="tel:+911140000192">+91 11 4000 0192</a></li>
+          <li><span>Studio:</span> Connaught Place, New Delhi, India</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Connect &amp; Legal</h3>
+        <div class="social-links" aria-label="Social Media">
+          <button type="button" class="social-btn" data-social="Instagram" aria-label="Yatra Sphere on Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="X" aria-label="Yatra Sphere on X">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4l16 16" />
+              <path d="M20 4L4 20" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="YouTube" aria-label="Yatra Sphere on YouTube">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="4" />
+              <polygon points="10 9 16 12 10 15 10 9" />
+            </svg>
+          </button>
+        </div>
+        <ul class="footer-links legal-links">
+          <li><button type="button" class="footer-link-btn" data-legal="privacy">Privacy Policy</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="terms">Terms of Use</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="demo">Demo Data Notice</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span id="current-year">2026</span> Yatra Sphere. All rights reserved.</p>
+      <p class="footer-note">Travel Tools &middot; Live OpenStreetMap/Open-Meteo APIs where available; clearly labeled illustrative stays &amp; transit estimates.</p>
+    </div>
+  </footer>
+
+  <!-- Shared Modal Dialog -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Dialog</h2>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

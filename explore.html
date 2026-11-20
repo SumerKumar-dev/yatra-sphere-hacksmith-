@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore Destinations — Yatra Sphere</title>
+  <meta name="description" content="Search and filter 16 Indian travel destinations across Mountains, Beaches, Historical, Religious, Adventure, Nature, and Wildlife with detailed guides and localStorage wishlist." />
+  <meta property="og:title" content="Explore Destinations — Yatra Sphere" />
+  <meta property="og:description" content="Explore 16 curated Indian destinations with best time to visit, tourist attractions, local food, nearby excursions, and wishlist saving." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="destinations-data.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="supabase-client.js" defer></script>
+  <script src="account-store.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="assistant.js" defer></script>
+</head>
+<body class="page-explore">
+  <a class="skip-link" href="#main-content" data-i18n="nav.skip">Skip to main content</a>
+
+  <!-- =========================================================
+       NAVIGATION BAR (Identical 3-Zone Contract)
+       ========================================================= -->
+  <header class="site-header scrolled" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-logo" aria-label="Yatra Sphere Home">
+        <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+          <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+          <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+        </svg>
+        <span class="brand-text">YATRA SPHERE</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="nav-link active" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="nav-link" data-i18n="nav.assistant">Assistant</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language switch">
+          <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिं</button>
+        </div>
+        <button type="button" class="btn btn-nav-cta" id="open-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+        <button
+          type="button"
+          class="mobile-menu-toggle"
+          id="mobile-menu-toggle"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          aria-label="Toggle navigation menu"
+        >
+          <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" hidden>
+      <nav class="mobile-nav-list" aria-label="Mobile Navigation">
+        <a href="index.html" class="mobile-nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="mobile-nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="mobile-nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="mobile-nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="mobile-nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="mobile-nav-link" data-i18n="nav.assistant">Assistant</a>
+        <a href="dashboard.html" class="mobile-nav-link" data-i18n="nav.dashboard">My Dashboard</a>
+        <div class="mobile-lang-row">
+          <span>Language / भाषा:</span>
+          <div class="lang-switch" role="group" aria-label="Language switch">
+            <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">English</button>
+            <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिन्दी</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary mobile-auth-btn" id="mobile-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- =========================================================
+         EXPLORE CATALOG VIEW
+         ========================================================= -->
+    <div id="explore-catalog-view">
+      <section class="explore-banner" aria-labelledby="explore-page-title">
+        <div class="container">
+          <div class="explore-banner-grid">
+            <div>
+              <p class="hero-tagline" data-i18n="hero.tagline">Explore More. Experience Beyond.</p>
+              <h1 class="explore-page-title" id="explore-page-title" data-i18n="explore.title">Explore Indian Destinations</h1>
+              <p class="explore-page-subtitle" data-i18n="explore.sub">
+                Browse 16 curated destinations across mountains, coastlines, heritage cities, sacred ghats, adventure circuits, rainforests, and wildlife sanctuaries—complete with seasonal guides, local cuisine, and wishlist saving.
+              </p>
+            </div>
+            <div class="explore-banner-actions">
+              <button type="button" class="btn btn-wishlist-header" id="open-wishlist-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span>Wishlist (<span id="wishlist-count-badge">0</span>)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Search & Filter Toolbar -->
+          <div class="explore-toolbar" role="region" aria-label="Search and filter destinations">
+            <div class="explore-search-row">
+              <div class="explore-search-field">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <label for="explore-search-input" class="sr-only">Search 16 destinations</label>
+                <input
+                  type="search"
+                  id="explore-search-input"
+                  class="explore-input"
+                  placeholder="Search destination, state, attraction, or local dish (e.g. Varanasi, tiger, dal baati)..."
+                  autocomplete="off"
+                />
+                <button type="button" class="search-clear-btn" id="explore-clear-btn" aria-label="Clear search" hidden>&times;</button>
+              </div>
+
+              <div class="explore-select-wrap">
+                <label for="explore-budget-select" class="sr-only">Filter by estimated budget</label>
+                <select id="explore-budget-select" class="explore-select">
+                  <option value="all">All Budgets</option>
+                  <option value="budget-low">Under ₹12,000</option>
+                  <option value="budget-mid">₹12,000 – ₹18,000</option>
+                  <option value="budget-high">Above ₹18,000</option>
+                </select>
+              </div>
+
+              <div class="explore-select-wrap">
+                <label for="explore-sort-select" class="sr-only">Sort destinations</label>
+                <select id="explore-sort-select" class="explore-select">
+                  <option value="recommended">Sort: Recommended</option>
+                  <option value="budget-asc">Budget: Low to High</option>
+                  <option value="budget-desc">Budget: High to Low</option>
+                  <option value="name-asc">Name: A to Z</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 7 Category Filter Tabs -->
+            <div class="explore-category-bar" role="tablist" aria-label="Filter by destination category">
+              <button type="button" class="filter-tab active" role="tab" aria-selected="true" data-explore-category="all">All (16)</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-explore-category="Mountains">Mountains</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-explore-category="Beaches">Beaches</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-explore-category="Historical">Historical</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-explore-category="Religious">Religious</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-explore-category="Adventure">Adventure</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-explore-category="Nature">Nature</button>
+              <button type="button" class="filter-tab" role="tab" aria-selected="false" data-explore-category="Wildlife">Wildlife</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section explore-results-section" aria-label="Destination catalog">
+        <div class="container">
+          <div class="explore-results-meta">
+            <p id="explore-results-summary" class="results-summary-text">Showing all 16 destinations</p>
+            <button type="button" class="btn-link" id="explore-reset-btn" hidden>Reset all filters</button>
+          </div>
+
+          <div class="destinations-grid" id="explore-grid">
+            <!-- Dynamically rendered from destinations-data.js -->
+          </div>
+
+          <div class="empty-results" id="explore-empty-state" hidden>
+            <h3>No destinations match your filters</h3>
+            <p>Try clearing your search term or switching to another category or budget tier.</p>
+            <button type="button" class="btn btn-primary" id="explore-empty-reset-btn">Reset All Filters</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- =========================================================
+         DYNAMICALLY RENDERED DESTINATION DETAIL VIEW
+         ========================================================= -->
+    <section
+      class="detail-view-section"
+      id="destination-detail-view"
+      aria-live="polite"
+      aria-label="Destination details"
+      hidden
+    >
+      <!-- Dynamically populated by script.js when a destination is opened -->
+    </section>
+  </main>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="site-footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <a href="index.html" class="brand-logo footer-brand">
+          <svg class="brand-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+            <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+            <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+            <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+          </svg>
+          <span class="brand-text">YATRA SPHERE</span>
+        </a>
+        <p class="footer-tagline">Explore More. Experience Beyond.</p>
+        <p class="footer-about">
+          Thoughtful travel discovery and intelligent itinerary planning across India’s mountains, coastlines, and heritage cities.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="explore.html" data-i18n="nav.explore">Explore Destinations</a></li>
+          <li><a href="planner.html" data-i18n="nav.planner">AI Trip Planner</a></li>
+          <li><a href="tools.html" data-i18n="nav.tools">Travel Tools</a></li>
+          <li><a href="guides.html?tab=gems" data-i18n="nav.gems">Hidden Gems</a></li>
+          <li><a href="guides.html?tab=safety" data-i18n="nav.safety">Travel Safety</a></li>
+          <li><a href="guides.html?tab=reviews" data-i18n="nav.reviews">Reviews &amp; Ratings</a></li>
+          <li><a href="assistant.html" data-i18n="nav.assistant">AI Travel Assistant</a></li>
+          <li><a href="dashboard.html" data-i18n="nav.dashboard">My Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Contact Information</h3>
+        <ul class="footer-contact">
+          <li><span>Email:</span> <a href="mailto:hello@yatrasphere.example">hello@yatrasphere.example</a></li>
+          <li><span>Phone:</span> <a href="tel:+911140000192">+91 11 4000 0192</a></li>
+          <li><span>Studio:</span> Connaught Place, New Delhi, India</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Connect &amp; Legal</h3>
+        <div class="social-links" aria-label="Social Media">
+          <button type="button" class="social-btn" data-social="Instagram" aria-label="Yatra Sphere on Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="X" aria-label="Yatra Sphere on X">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4l16 16" />
+              <path d="M20 4L4 20" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="YouTube" aria-label="Yatra Sphere on YouTube">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="4" />
+              <polygon points="10 9 16 12 10 15 10 9" />
+            </svg>
+          </button>
+        </div>
+        <ul class="footer-links legal-links">
+          <li><button type="button" class="footer-link-btn" data-legal="privacy">Privacy Policy</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="terms">Terms of Use</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="demo">Demo Data Notice</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span id="current-year">2026</span> Yatra Sphere. All rights reserved.</p>
+      <p class="footer-note">Explore Destinations &middot; Indicative sample guides &amp; localStorage wishlist.</p>
+    </div>
+  </footer>
+
+  <!-- Shared Modal Dialog (Wishlist Drawer, Auth Demo, Legal) -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Dialog</h2>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

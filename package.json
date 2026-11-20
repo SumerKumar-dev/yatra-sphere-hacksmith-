@@ -1,0 +1,14 @@
+{
+  "name": "yatra-sphere",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node -e \"import('node:http').then(async({default:http})=>{const fs=await import('node:fs');const path=await import('node:path');const root=process.cwd();const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.svg':'image/svg+xml','.webp':'image/webp','.ico':'image/x-icon'};http.createServer((req,res)=>{const cleanUrl=decodeURIComponent((req.url||'/').split('?')[0]);const rel=cleanUrl==='/'?'index.html':cleanUrl.replace(/^\\/+/, '');const full=path.resolve(root,rel);if(!full.startsWith(root)){res.writeHead(403);res.end('Forbidden');return;}let target=full;if(fs.existsSync(target)&&fs.statSync(target).isDirectory()){target=path.join(target,'index.html');}if(!fs.existsSync(target)||!fs.statSync(target).isFile()){res.writeHead(404);res.end('Not found');return;}const ext=path.extname(target).toLowerCase();res.writeHead(200,{'Content-Type':mime[ext]||'application/octet-stream'});fs.createReadStream(target).pipe(res);}).listen(3000,'0.0.0.0',()=>console.log('Yatra Sphere static server listening on http://0.0.0.0:3000'));});\"",
+    "build": "node -e \"import('node:fs').then(async({default:fs})=>{const path=await import('node:path');const dist=path.resolve('dist');fs.rmSync(dist,{recursive:true,force:true});fs.mkdirSync(dist,{recursive:true});for(const f of fs.readdirSync('.')){if(/\\.(html|css|js)$/i.test(f)&&fs.statSync(f).isFile()){fs.copyFileSync(f,path.join(dist,f));}}if(fs.existsSync('src/assets')){fs.mkdirSync(path.join(dist,'src'),{recursive:true});fs.cpSync('src/assets',path.join(dist,'src/assets'),{recursive:true});}console.log('Built static Yatra Sphere bundle to dist/');});\"",
+    "clean": "rm -rf dist",
+    "lint": "node -e \"import('node:fs').then(async({default:fs})=>{const{execFileSync}=await import('node:child_process');const files=fs.readdirSync('.').filter(f=>f.endsWith('.js'));for(const f of files){execFileSync(process.execPath,['--check',f],{stdio:'inherit'});}console.log('Checked '+files.length+' Vanilla JS files successfully.');});\""
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

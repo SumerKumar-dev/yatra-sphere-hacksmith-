@@ -1,0 +1,6 @@
+{
+  "name": "Yatra Sphere",
+  "description": "Yatra Sphere — Explore More. Experience Beyond. A curated travel and intelligent trip planning website built with pure HTML5, CSS3, and Vanilla JavaScript.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

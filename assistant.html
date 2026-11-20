@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Travel Assistant — Yatra Sphere</title>
+  <meta name="description" content="Chat with the Yatra Sphere AI Travel Assistant for curated Indian destination ideas, INR budget planning, packing checklists, best seasons to visit, and solo or family travel advice." />
+  <meta property="og:title" content="AI Travel Assistant — Yatra Sphere" />
+  <meta property="og:description" content="Get tailored Indian destination recommendations, budget estimates, packing checklists, and seasonal timing guidance with Yatra Sphere." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="destinations-data.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="supabase-client.js" defer></script>
+  <script src="account-store.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="assistant.js" defer></script>
+</head>
+<body class="page-assistant">
+  <a class="skip-link" href="#main-content" data-i18n="nav.skip">Skip to main content</a>
+
+  <!-- =========================================================
+       NAVIGATION BAR (3-Zone Single-Row Contract)
+       ========================================================= -->
+  <header class="site-header scrolled" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-logo" aria-label="Yatra Sphere Home">
+        <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+          <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+          <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+        </svg>
+        <span class="brand-text">YATRA SPHERE</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="nav-link active" data-i18n="nav.assistant">Assistant</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language switch">
+          <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिं</button>
+        </div>
+        <button type="button" class="btn btn-nav-cta" id="open-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+        <button
+          type="button"
+          class="mobile-menu-toggle"
+          id="mobile-menu-toggle"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          aria-label="Toggle navigation menu"
+        >
+          <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" hidden>
+      <nav class="mobile-nav-list" aria-label="Mobile Navigation">
+        <a href="index.html" class="mobile-nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="mobile-nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="mobile-nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="mobile-nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="mobile-nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="mobile-nav-link" data-i18n="nav.assistant">Assistant</a>
+        <a href="dashboard.html" class="mobile-nav-link" data-i18n="nav.dashboard">My Dashboard</a>
+        <div class="mobile-lang-row">
+          <span>Language / भाषा:</span>
+          <div class="lang-switch" role="group" aria-label="Language switch">
+            <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">English</button>
+            <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिन्दी</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary mobile-auth-btn" id="mobile-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- =========================================================
+         ASSISTANT PAGE BANNER
+         ========================================================= -->
+    <section class="explore-banner assistant-page-banner" aria-labelledby="assistant-page-title">
+      <div class="container">
+        <div class="explore-banner-grid">
+          <div>
+            <p class="hero-tagline" data-i18n="hero.tagline">Explore More. Experience Beyond.</p>
+            <h1 class="explore-page-title" id="assistant-page-title" data-i18n="assistant.title">Yatra Sphere Travel Assistant</h1>
+            <p class="explore-page-subtitle" data-i18n="assistant.sub">
+              Ask for destination picks, INR budget guidance, seasonal timing, packing checklists, or solo and family travel advice across 16 Indian regions.
+            </p>
+          </div>
+          <div class="explore-banner-actions">
+            <a href="planner.html" class="btn btn-wishlist-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span>Open Trip Planner</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="demo-mode-banner" role="note">
+          <strong>Demo Travel Assistant (Rule-Based Mode):</strong> No live Gemini API backend is connected in this static frontend environment. Responses are generated locally using Yatra Sphere’s curated 16-destination knowledge base and travel heuristics without exposing API keys.
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CHATBOT WORKSPACE (2-COLUMN EDITORIAL LAYOUT)
+         ========================================================= -->
+    <section class="section assistant-workspace-section" aria-label="AI Travel Assistant chat workspace">
+      <div class="container">
+        <div class="assistant-shell">
+          <!-- Left Sidebar: Travel Context & Suggested Questions -->
+          <aside class="assistant-sidebar" aria-label="Travel preferences and suggested questions">
+            <div class="assistant-sidebar-block">
+              <h2 class="assistant-sidebar-heading">Trip Context</h2>
+              <p class="assistant-sidebar-note">Tailor replies to your group, budget, and season.</p>
+
+              <div class="context-control-group">
+                <span class="context-label">Travel Style</span>
+                <div class="context-segmented" role="group" aria-label="Select travel style">
+                  <button type="button" class="context-seg-btn active" data-context-style="any" aria-pressed="true">Any</button>
+                  <button type="button" class="context-seg-btn" data-context-style="solo" aria-pressed="false">Solo</button>
+                  <button type="button" class="context-seg-btn" data-context-style="family" aria-pressed="false">Family</button>
+                  <button type="button" class="context-seg-btn" data-context-style="friends" aria-pressed="false">Friends</button>
+                </div>
+              </div>
+
+              <div class="context-control-group">
+                <label for="context-budget-select" class="context-label">Target Budget (Per Traveler)</label>
+                <select id="context-budget-select" class="context-select">
+                  <option value="any">Any Budget</option>
+                  <option value="12000">Under ₹12,000</option>
+                  <option value="18000">₹12,000 – ₹18,000</option>
+                  <option value="25000">₹18,000 – ₹28,000</option>
+                </select>
+              </div>
+
+              <div class="context-control-group">
+                <label for="context-season-select" class="context-label">Preferred Season</label>
+                <select id="context-season-select" class="context-select">
+                  <option value="any">Any Season</option>
+                  <option value="winter">Winter (Nov – Feb)</option>
+                  <option value="summer">Summer (Mar – Jun)</option>
+                  <option value="monsoon">Monsoon (Jul – Sep)</option>
+                  <option value="autumn">Autumn (Oct)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="assistant-sidebar-block">
+              <h2 class="assistant-sidebar-heading">Suggested Questions</h2>
+              <div class="suggested-questions-list" role="list">
+                <button type="button" class="suggested-question-btn" data-suggested-prompt="Recommend peaceful mountain destinations under ₹15,000">
+                  <span class="sq-kicker">Destinations &middot; Budget</span>
+                  <span class="sq-text">Mountain escapes under ₹15,000</span>
+                </button>
+                <button type="button" class="suggested-question-btn" data-suggested-prompt="Where can I plan a comfortable family vacation in India?">
+                  <span class="sq-kicker">Family Travel</span>
+                  <span class="sq-text">Best destinations for a family trip</span>
+                </button>
+                <button type="button" class="suggested-question-btn" data-suggested-prompt="Suggest safe and scenic solo travel destinations in India">
+                  <span class="sq-kicker">Solo Travel</span>
+                  <span class="sq-text">Safe, walkable solo trip ideas</span>
+                </button>
+                <button type="button" class="suggested-question-btn" data-suggested-prompt="What should I pack for a 5-day trip to Ladakh or Kashmir?">
+                  <span class="sq-kicker">Packing Guide</span>
+                  <span class="sq-text">What to pack for Ladakh &amp; Kashmir</span>
+                </button>
+                <button type="button" class="suggested-question-btn" data-suggested-prompt="When is the best time to visit Goa, Kerala, and Meghalaya?">
+                  <span class="sq-kicker">Seasonal Timing</span>
+                  <span class="sq-text">Best months for Goa, Kerala &amp; Meghalaya</span>
+                </button>
+                <button type="button" class="suggested-question-btn" data-suggested-prompt="What are the best beaches and islands under ₹20,000?">
+                  <span class="sq-kicker">Beaches &amp; Budget</span>
+                  <span class="sq-text">Beach &amp; island picks under ₹20,000</span>
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main Chat Conversation Panel -->
+          <div class="chat-panel">
+            <header class="chat-panel-header">
+              <div class="chat-persona">
+                <div class="chat-avatar-badge" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.8" />
+                    <path d="M16 6L19.2 16L16 26L12.8 16L16 6Z" fill="#10B981" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="chat-panel-title">Yatra Sphere Concierge</h2>
+                  <p class="chat-panel-meta">Rule-Based Demo Assistant &middot; 16 Indian Regions</p>
+                </div>
+              </div>
+
+              <div class="chat-header-actions">
+                <button type="button" class="btn-card-action" id="clear-chat-btn">
+                  Clear Chat
+                </button>
+              </div>
+            </header>
+
+            <!-- Scrollable Message Thread -->
+            <div
+              class="chat-messages"
+              id="chat-messages"
+              role="log"
+              aria-live="polite"
+              aria-label="Conversation history"
+            >
+              <!-- Rendered dynamically by assistant.js -->
+            </div>
+
+            <!-- Mobile Quick Suggestions Strip -->
+            <div class="chat-mobile-suggestions" aria-label="Quick prompts">
+              <button type="button" class="quick-prompt-btn" data-suggested-prompt="Best destinations under ₹14,000">Under ₹14,000</button>
+              <button type="button" class="quick-prompt-btn" data-suggested-prompt="Packing list for Kashmir">Packing List</button>
+              <button type="button" class="quick-prompt-btn" data-suggested-prompt="Best time to visit Goa">Best Time</button>
+              <button type="button" class="quick-prompt-btn" data-suggested-prompt="Solo travel recommendations">Solo Ideas</button>
+              <button type="button" class="quick-prompt-btn" data-suggested-prompt="Family trip suggestions">Family Ideas</button>
+            </div>
+
+            <!-- Error Banner & Composer -->
+            <div class="chat-composer-area">
+              <div class="chat-error-banner" id="chat-error-banner" role="alert" hidden>
+                <span id="chat-error-text"></span>
+                <button type="button" class="btn-link chat-error-retry" id="chat-retry-btn" hidden>Retry</button>
+              </div>
+
+              <form class="chat-composer-form" id="chat-composer-form" novalidate>
+                <label for="chat-input" class="sr-only">Ask the Yatra Sphere Travel Assistant a question</label>
+                <textarea
+                  id="chat-input"
+                  class="chat-input"
+                  rows="1"
+                  maxlength="600"
+                  placeholder="Ask about Manali, ₹15,000 budgets, packing for Meghalaya, best time for Andaman, or solo trips..."
+                  autocomplete="off"
+                ></textarea>
+                <button type="submit" class="btn btn-primary chat-send-btn" id="chat-send-btn">
+                  <span>Send</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </button>
+              </form>
+              <p class="chat-composer-hint">
+                Press Enter to send &middot; Shift + Enter for a new line &middot; Conversations stay in your browser
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="site-footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <a href="index.html" class="brand-logo footer-brand">
+          <svg class="brand-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+            <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+            <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+            <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+          </svg>
+          <span class="brand-text">YATRA SPHERE</span>
+        </a>
+        <p class="footer-tagline">Explore More. Experience Beyond.</p>
+        <p class="footer-about">
+          Thoughtful travel discovery and intelligent itinerary planning across India’s mountains, coastlines, and heritage cities.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="explore.html" data-i18n="nav.explore">Explore Destinations</a></li>
+          <li><a href="planner.html" data-i18n="nav.planner">AI Trip Planner</a></li>
+          <li><a href="tools.html" data-i18n="nav.tools">Travel Tools</a></li>
+          <li><a href="guides.html?tab=gems" data-i18n="nav.gems">Hidden Gems</a></li>
+          <li><a href="guides.html?tab=safety" data-i18n="nav.safety">Travel Safety</a></li>
+          <li><a href="assistant.html" data-i18n="nav.assistant">AI Travel Assistant</a></li>
+          <li><a href="dashboard.html" data-i18n="nav.dashboard">My Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Contact Information</h3>
+        <ul class="footer-contact">
+          <li><span>Email:</span> <a href="mailto:hello@yatrasphere.example">hello@yatrasphere.example</a></li>
+          <li><span>Phone:</span> <a href="tel:+911140000192">+91 11 4000 0192</a></li>
+          <li><span>Studio:</span> Connaught Place, New Delhi, India</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Connect &amp; Legal</h3>
+        <div class="social-links" aria-label="Social Media">
+          <button type="button" class="social-btn" data-social="Instagram" aria-label="Yatra Sphere on Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="X" aria-label="Yatra Sphere on X">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4l16 16" />
+              <path d="M20 4L4 20" />
+            </svg>
+          </button>
+          <button type="button" class="social-btn" data-social="YouTube" aria-label="Yatra Sphere on YouTube">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="4" />
+              <polygon points="10 9 16 12 10 15 10 9" />
+            </svg>
+          </button>
+        </div>
+        <ul class="footer-links legal-links">
+          <li><button type="button" class="footer-link-btn" data-legal="privacy">Privacy Policy</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="terms">Terms of Use</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="demo">Demo Data Notice</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span id="current-year">2026</span> Yatra Sphere. All rights reserved.</p>
+      <p class="footer-note">AI Travel Assistant &middot; Rule-based demo engine (local browser session).</p>
+    </div>
+  </footer>
+
+  <!-- Shared Modal Dialog (Auth Demo, Legal) -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Dialog</h2>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

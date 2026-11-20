@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Guides, Hidden Gems &amp; Safety — Yatra Sphere</title>
+  <meta name="description" content="Explore hidden Indian gems, verified travel safety & emergency helplines, eco-friendly sustainable tourism guides, and traveler reviews on Yatra Sphere." />
+  <meta property="og:title" content="Travel Guides, Hidden Gems & Safety — Yatra Sphere" />
+  <meta property="og:description" content="Discover offbeat Indian destinations, emergency preparedness checklists, sustainable tourism tips, and destination reviews." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="destinations-data.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="supabase-client.js" defer></script>
+  <script src="account-store.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="guides.js" defer></script>
+  <script src="assistant.js" defer></script>
+</head>
+<body class="page-guides">
+  <a class="skip-link" href="#main-content" data-i18n="nav.skip">Skip to main content</a>
+
+  <!-- =========================================================
+       NAVIGATION BAR (3-Zone Single-Row Contract)
+       ========================================================= -->
+  <header class="site-header scrolled" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-logo" aria-label="Yatra Sphere Home">
+        <svg class="brand-mark" width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+          <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+          <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+        </svg>
+        <span class="brand-text">YATRA SPHERE</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="nav-link active" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="nav-link" data-i18n="nav.assistant">Assistant</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language switch">
+          <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिं</button>
+        </div>
+        <button type="button" class="btn btn-nav-cta" id="open-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+        <button
+          type="button"
+          class="mobile-menu-toggle"
+          id="mobile-menu-toggle"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          aria-label="Toggle navigation menu"
+        >
+          <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" hidden>
+      <nav class="mobile-nav-list" aria-label="Mobile Navigation">
+        <a href="index.html" class="mobile-nav-link" data-i18n="nav.home">Home</a>
+        <a href="explore.html" class="mobile-nav-link" data-i18n="nav.explore">Explore</a>
+        <a href="planner.html" class="mobile-nav-link" data-i18n="nav.planner">Planner</a>
+        <a href="tools.html" class="mobile-nav-link" data-i18n="nav.tools">Tools</a>
+        <a href="guides.html" class="mobile-nav-link" data-i18n="nav.guides">Guides</a>
+        <a href="assistant.html" class="mobile-nav-link" data-i18n="nav.assistant">Assistant</a>
+        <a href="dashboard.html" class="mobile-nav-link" data-i18n="nav.dashboard">My Dashboard</a>
+        <div class="mobile-lang-row">
+          <span>Language / भाषा:</span>
+          <div class="lang-switch" role="group" aria-label="Language switch">
+            <button type="button" class="lang-btn active" data-lang-switch="en" aria-pressed="true">English</button>
+            <button type="button" class="lang-btn" data-lang-switch="hi" aria-pressed="false">हिन्दी</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary mobile-auth-btn" id="mobile-auth-btn" data-i18n="auth.loginSignup">
+          Login / Sign Up
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- =========================================================
+         GUIDES HUB BANNER & MODULE TABS
+         ========================================================= -->
+    <section class="explore-banner guides-page-banner" aria-labelledby="guides-page-title">
+      <div class="container">
+        <div class="explore-banner-grid">
+          <div>
+            <p class="hero-tagline" data-i18n="hero.tagline">Explore More. Experience Beyond.</p>
+            <h1 class="explore-page-title" id="guides-page-title" data-i18n="guides.bannerTitle">Guides, Safety &amp; Community</h1>
+            <p class="explore-page-subtitle" data-i18n="guides.bannerSub">
+              Discover lesser-known Indian destinations, verify emergency helplines and document checklists, explore eco-friendly travel practices, and read or share destination reviews.
+            </p>
+          </div>
+          <div class="explore-banner-actions">
+            <a href="planner.html" class="btn btn-wishlist-header">
+              <span data-i18n="hero.planCta">Plan My Trip</span> &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Module Switcher Tabs -->
+        <div class="guides-tabs-bar" role="tablist" aria-label="Guides modules">
+          <button type="button" class="tools-tab-btn active" role="tab" aria-selected="true" id="guides-tab-gems" data-guides-tab="gems">
+            <span data-i18n="guides.tabGems">Hidden Gems</span>
+          </button>
+          <button type="button" class="tools-tab-btn" role="tab" aria-selected="false" id="guides-tab-safety" data-guides-tab="safety">
+            <span data-i18n="guides.tabSafety">Travel Safety</span>
+          </button>
+          <button type="button" class="tools-tab-btn" role="tab" aria-selected="false" id="guides-tab-sustainable" data-guides-tab="sustainable">
+            <span data-i18n="guides.tabSustainable">Sustainable Travel</span>
+          </button>
+          <button type="button" class="tools-tab-btn" role="tab" aria-selected="false" id="guides-tab-reviews" data-guides-tab="reviews">
+            <span data-i18n="guides.tabReviews">Reviews &amp; Ratings</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WORKSPACE PANELS
+         ========================================================= -->
+    <section class="section guides-workspace-section">
+      <div class="container">
+
+        <!-- =====================================================
+             MODULE 1: HIDDEN GEMS EXPLORER
+             ===================================================== -->
+        <div class="tools-panel" id="guides-panel-gems" role="tabpanel" aria-labelledby="guides-tab-gems">
+          <div class="section-header-row">
+            <div class="section-heading-block">
+              <p class="section-kicker" data-i18n="guides.gemsKicker">Offbeat India</p>
+              <h2 class="section-title" data-i18n="guides.gemsTitle">Hidden Gems Explorer</h2>
+              <p class="section-lead" data-i18n="guides.gemsLead">
+                Lesser-known Indian valleys, heritage towns, and coastal trails curated for authentic local experiences and gentle budgets.
+              </p>
+            </div>
+          </div>
+
+          <div class="guides-filter-bar">
+            <div class="explore-search-field">
+              <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <label for="gems-search-input" class="sr-only">Search hidden gems</label>
+              <input
+                type="search"
+                id="gems-search-input"
+                class="explore-search-input"
+                placeholder="Search Ziro, Spiti, Majuli, Bundi, Chettinad, Gokarna..."
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="gems-filter-controls">
+              <div class="context-segmented" role="tablist" aria-label="Filter hidden gems by region">
+                <button type="button" class="context-seg-btn active" data-gem-zone="all" aria-pressed="true">All Regions</button>
+                <button type="button" class="context-seg-btn" data-gem-zone="Himalayas" aria-pressed="false">Himalayas</button>
+                <button type="button" class="context-seg-btn" data-gem-zone="Northeast" aria-pressed="false">Northeast</button>
+                <button type="button" class="context-seg-btn" data-gem-zone="Heritage & Stepwells" aria-pressed="false">Heritage</button>
+                <button type="button" class="context-seg-btn" data-gem-zone="Coast & Forests" aria-pressed="false">Coast</button>
+              </div>
+
+              <label for="gems-budget-select" class="sr-only">Filter hidden gems by budget</label>
+              <select id="gems-budget-select" class="tools-select">
+                <option value="all">All Budgets</option>
+                <option value="low">Budget-Friendly (Under ₹12,500)</option>
+                <option value="mid">Mid-Range (₹12,500+)</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="explore-results-summary" id="gems-results-summary">Showing 8 offbeat destinations</p>
+
+          <div class="gems-grid" id="gems-grid">
+            <!-- Populated by guides.js -->
+          </div>
+
+          <div class="empty-results" id="gems-empty-state" hidden>
+            <h3>No hidden gems match your filter</h3>
+            <p>Clear your search query or switch back to all regions and budgets.</p>
+            <button type="button" class="btn btn-primary" id="gems-reset-btn">Show All Hidden Gems</button>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             MODULE 2: TRAVEL SAFETY & EMERGENCY
+             ===================================================== -->
+        <div class="tools-panel" id="guides-panel-safety" role="tabpanel" aria-labelledby="guides-tab-safety" hidden>
+          <div class="section-header-row">
+            <div class="section-heading-block">
+              <p class="section-kicker" data-i18n="guides.safetyKicker">Emergency &amp; Preparedness</p>
+              <h2 class="section-title" data-i18n="guides.safetyTitle">Travel Safety &amp; Emergency Guide</h2>
+              <p class="section-lead" data-i18n="guides.safetyLead">
+                Verified national helplines, interactive document checklists, weather precautions, and live OpenStreetMap hospital/police lookup.
+              </p>
+            </div>
+          </div>
+
+          <!-- Verified National Helplines -->
+          <section class="dash-block" aria-labelledby="safety-helplines-heading">
+            <div class="dash-block-header">
+              <h3 class="dash-block-title" id="safety-helplines-heading">Verified Official Indian Emergency Helplines</h3>
+              <span class="preview-mode-note">National Toll-Free Numbers</span>
+            </div>
+            <div class="helplines-grid" id="safety-helplines-grid">
+              <!-- Populated by guides.js -->
+            </div>
+          </section>
+
+          <!-- Nearby Emergency Services & Verified Hub Directory -->
+          <div class="safety-two-col">
+            <section class="dash-block" aria-labelledby="nearby-emergency-heading">
+              <div class="dash-block-header">
+                <h3 class="dash-block-title" id="nearby-emergency-heading">Nearby Emergency Services (OpenStreetMap)</h3>
+                <span class="preview-mode-note">Live OSM Overpass Query</span>
+              </div>
+              <p class="dash-panel-desc">
+                Select a destination or use your device GPS to look up real nearby hospitals, clinics, and police stations mapped on OpenStreetMap. Never substitutes for dialing <strong>112</strong> in an emergency.
+              </p>
+
+              <div class="safety-lookup-controls">
+                <div class="form-field">
+                  <label for="safety-hub-select">Select Destination Hub</label>
+                  <select id="safety-hub-select" class="tools-select">
+                    <!-- Populated by guides.js -->
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary" id="safety-osm-hub-btn">Find Around Hub</button>
+                <button type="button" class="btn-card-action" id="safety-osm-gps-btn">Use My Location</button>
+              </div>
+
+              <div class="safety-hub-card" id="safety-hub-directory">
+                <!-- Verified hub reference populated by guides.js -->
+              </div>
+
+              <div class="safety-osm-status" id="safety-osm-status" aria-live="polite"></div>
+              <div class="safety-osm-results" id="safety-osm-results"></div>
+            </section>
+
+            <!-- Travel Document Checklist -->
+            <section class="dash-block" aria-labelledby="safety-docs-heading">
+              <div class="dash-block-header">
+                <h3 class="dash-block-title" id="safety-docs-heading">Travel Document &amp; Medical Checklist</h3>
+                <span class="checklist-saved-meta" id="safety-docs-progress">0 of 0 ready</span>
+              </div>
+              <p class="dash-panel-desc">
+                Check off critical IDs, regional permits (ILP/PAP), and offline backups before departure. Saved locally in your browser.
+              </p>
+
+              <form class="safety-doc-add-form" id="safety-doc-form" novalidate>
+                <label for="safety-doc-input" class="sr-only">Add custom travel document</label>
+                <input
+                  type="text"
+                  id="safety-doc-input"
+                  placeholder="Add permit or document (e.g. Rohtang Pass Permit)..."
+                  maxlength="100"
+                  required
+                />
+                <button type="submit" class="btn btn-primary">Add</button>
+              </form>
+
+              <div class="safety-docs-list" id="safety-docs-list">
+                <!-- Populated by guides.js -->
+              </div>
+
+              <div class="safety-docs-footer">
+                <button type="button" class="btn-link" id="safety-docs-reset-btn">Reset Default Checklist</button>
+              </div>
+            </section>
+          </div>
+
+          <!-- Weather-Related & General Precautions -->
+          <section class="dash-block" aria-labelledby="weather-safety-heading" style="margin-top: 24px;">
+            <div class="dash-block-header">
+              <h3 class="dash-block-title" id="weather-safety-heading">Weather &amp; Terrain Travel Precautions</h3>
+              <div class="context-segmented" role="tablist" aria-label="Terrain weather precautions">
+                <button type="button" class="context-seg-btn active" data-weather-precaution="mountains" aria-pressed="true">Mountains</button>
+                <button type="button" class="context-seg-btn" data-weather-precaution="monsoon" aria-pressed="false">Monsoon</button>
+                <button type="button" class="context-seg-btn" data-weather-precaution="coastal" aria-pressed="false">Coastal</button>
+                <button type="button" class="context-seg-btn" data-weather-precaution="plains" aria-pressed="false">Summer Plains</button>
+              </div>
+            </div>
+            <div class="weather-precaution-grid" id="safety-weather-grid">
+              <!-- Populated by guides.js -->
+            </div>
+          </section>
+
+          <section class="dash-block" aria-labelledby="general-precautions-heading" style="margin-top: 24px;">
+            <div class="dash-block-header">
+              <h3 class="dash-block-title" id="general-precautions-heading">Essential Traveler Precautions</h3>
+            </div>
+            <div class="precautions-cards-grid" id="safety-general-grid">
+              <!-- Populated by guides.js -->
+            </div>
+          </section>
+        </div>
+
+        <!-- =====================================================
+             MODULE 3: SUSTAINABLE TOURISM
+             ===================================================== -->
+        <div class="tools-panel" id="guides-panel-sustainable" role="tabpanel" aria-labelledby="guides-tab-sustainable" hidden>
+          <div class="section-header-row">
+            <div class="section-heading-block">
+              <p class="section-kicker" data-i18n="guides.ecoKicker">Low-Impact Journeys</p>
+              <h2 class="section-title" data-i18n="guides.ecoTitle">Sustainable &amp; Community Tourism</h2>
+              <p class="section-lead" data-i18n="guides.ecoLead">
+                Destinations, locally led stays, and practical habits that keep fragile ecosystems and artisan communities thriving.
+              </p>
+            </div>
+          </div>
+
+          <h3 class="guides-subhead">Eco-Friendly Indian Destinations</h3>
+          <div class="eco-dest-grid" id="eco-dest-grid">
+            <!-- Populated by guides.js -->
+          </div>
+
+          <div class="safety-two-col" style="margin-top: 28px;">
+            <section class="dash-block" aria-labelledby="eco-local-heading">
+              <div class="dash-block-header">
+                <h3 class="dash-block-title" id="eco-local-heading">Local Tourism Recommendations</h3>
+              </div>
+              <div class="eco-local-list" id="eco-local-list">
+                <!-- Populated by guides.js -->
+              </div>
+            </section>
+
+            <section class="dash-block" aria-labelledby="eco-pledge-heading">
+              <div class="dash-block-header">
+                <h3 class="dash-block-title" id="eco-pledge-heading">Responsible Travel Pledge &amp; Habits</h3>
+                <span class="checklist-saved-meta" id="eco-pledge-count">0 of 0 pledged</span>
+              </div>
+              <p class="dash-panel-desc">
+                Commit to practical, low-impact habits for your upcoming journey. Progress saves automatically in your browser.
+              </p>
+              <div class="eco-pledge-list" id="eco-pledge-list">
+                <!-- Populated by guides.js -->
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             MODULE 4: REVIEWS & RATINGS
+             ===================================================== -->
+        <div class="tools-panel" id="guides-panel-reviews" role="tabpanel" aria-labelledby="guides-tab-reviews" hidden>
+          <div class="section-header-row">
+            <div class="section-heading-block">
+              <p class="section-kicker" data-i18n="guides.revKicker">Community Feedback</p>
+              <h2 class="section-title" data-i18n="guides.revTitle">Destination Reviews &amp; Ratings</h2>
+              <p class="section-lead" data-i18n="guides.revLead">
+                Browse demonstration reviews or submit your own rating and notes—saved locally in your browser.
+              </p>
+            </div>
+          </div>
+
+          <div class="demo-mode-banner" role="note">
+            <strong>Demonstration Reviews &amp; Local Feedback Notice:</strong> Pre-loaded entries marked <em>Demonstration Review (Sample Data)</em> are illustrative examples because no remote database is connected. Reviews you submit are saved in your browser's <code>localStorage</code> and marked <em>Saved Locally in Browser</em>.
+          </div>
+
+          <!-- Summary + Feedback Form Grid -->
+          <div class="reviews-layout-grid">
+            <div class="reviews-main-col">
+              <!-- Rating Overview -->
+              <div class="dash-block reviews-summary-card" id="reviews-summary-card">
+                <!-- Populated by guides.js -->
+              </div>
+
+              <!-- Filter Bar -->
+              <div class="reviews-filter-bar">
+                <div class="form-field">
+                  <label for="reviews-filter-dest">Destination</label>
+                  <select id="reviews-filter-dest" class="tools-select">
+                    <option value="all">All Destinations</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="reviews-filter-rating">Minimum Rating</label>
+                  <select id="reviews-filter-rating" class="tools-select">
+                    <option value="0">All Ratings</option>
+                    <option value="5">5 Stars Only</option>
+                    <option value="4">4+ Stars</option>
+                    <option value="3">3+ Stars</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="reviews-sort-select">Sort Order</label>
+                  <select id="reviews-sort-select" class="tools-select">
+                    <option value="newest">Newest First</option>
+                    <option value="highest">Highest Rated</option>
+                    <option value="lowest">Lowest Rated</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Reviews Feed -->
+              <div class="reviews-feed" id="reviews-feed">
+                <!-- Populated by guides.js -->
+              </div>
+
+              <div class="empty-results" id="reviews-empty-state" hidden>
+                <h3>No reviews match these filters</h3>
+                <p>Switch back to all destinations or be the first to write a local review using the form.</p>
+                <button type="button" class="btn btn-primary" id="reviews-reset-btn">Show All Reviews</button>
+              </div>
+            </div>
+
+            <!-- Feedback Form Column -->
+            <aside class="dash-block reviews-form-card" aria-labelledby="review-form-heading">
+              <p class="section-kicker">Share Your Experience</p>
+              <h3 class="dash-block-title" id="review-form-heading">Write a Destination Review</h3>
+              <p class="dash-panel-desc">
+                Rate pacing, seasonal weather, and local hospitality. Saved locally in your browser.
+              </p>
+
+              <form class="review-submit-form" id="review-submit-form" novalidate>
+                <div class="auth-form-alert" id="review-form-error" role="alert" hidden></div>
+
+                <div class="form-field">
+                  <label for="review-dest-select">Destination</label>
+                  <select id="review-dest-select" required></select>
+                </div>
+
+                <div class="form-field">
+                  <label for="review-author-input">Your Name</label>
+                  <input type="text" id="review-author-input" placeholder="e.g. Ananya Verma" maxlength="60" required />
+                </div>
+
+                <div class="form-field">
+                  <label for="review-triptype-select">Trip Style</label>
+                  <select id="review-triptype-select">
+                    <option value="Solo">Solo</option>
+                    <option value="Family">Family</option>
+                    <option value="Friends">Friends</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <span class="star-picker-label" id="star-picker-label">Your Rating</span>
+                  <div class="star-picker" role="radiogroup" aria-labelledby="star-picker-label" id="review-star-picker">
+                    <button type="button" class="star-pick-btn active" data-star-value="1" aria-label="1 star" aria-checked="false">&#9733;</button>
+                    <button type="button" class="star-pick-btn active" data-star-value="2" aria-label="2 stars" aria-checked="false">&#9733;</button>
+                    <button type="button" class="star-pick-btn active" data-star-value="3" aria-label="3 stars" aria-checked="false">&#9733;</button>
+                    <button type="button" class="star-pick-btn active" data-star-value="4" aria-label="4 stars" aria-checked="false">&#9733;</button>
+                    <button type="button" class="star-pick-btn active" data-star-value="5" aria-label="5 stars" aria-checked="true">&#9733;</button>
+                    <span class="star-picker-text" id="star-picker-text">5 / 5 Excellent</span>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label for="review-title-input">Review Headline</label>
+                  <input type="text" id="review-title-input" placeholder="Summarize your route or season experience..." maxlength="100" required />
+                </div>
+
+                <div class="form-field">
+                  <label for="review-comment-input">Your Review</label>
+                  <textarea id="review-comment-input" rows="4" placeholder="What worked well? Any timing, transit, or stay tips for fellow travelers?" maxlength="600" required></textarea>
+                </div>
+
+                <div class="form-field">
+                  <label for="review-eco-input">Responsible Travel Tip (Optional)</label>
+                  <input type="text" id="review-eco-input" placeholder="e.g. Refilled water bottles at local homestay..." maxlength="140" />
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Publish Local Review</button>
+              </form>
+            </aside>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <a href="index.html" class="brand-logo footer-brand">
+          <svg class="brand-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.75" />
+            <ellipse cx="16" cy="16" rx="6.5" ry="14" stroke="currentColor" stroke-width="1.5" />
+            <path d="M2.5 16H29.5" stroke="currentColor" stroke-width="1.5" />
+            <path d="M16 5L19 16L16 27L13 16L16 5Z" fill="#10B981" fill-opacity="0.85" />
+          </svg>
+          <span class="brand-text">YATRA SPHERE</span>
+        </a>
+        <p class="footer-tagline" data-i18n="footer.tagline">Explore More. Experience Beyond.</p>
+        <p class="footer-about" data-i18n="footer.about">
+          Thoughtful travel discovery and intelligent itinerary planning across India’s mountains, coastlines, and heritage cities.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="explore.html" data-i18n="nav.explore">Explore</a></li>
+          <li><a href="planner.html" data-i18n="nav.planner">Planner</a></li>
+          <li><a href="tools.html" data-i18n="nav.tools">Tools</a></li>
+          <li><a href="guides.html?tab=gems" data-i18n="nav.gems">Hidden Gems</a></li>
+          <li><a href="guides.html?tab=safety" data-i18n="nav.safety">Travel Safety</a></li>
+          <li><a href="guides.html?tab=sustainable" data-i18n="nav.sustainable">Sustainable Travel</a></li>
+          <li><a href="guides.html?tab=reviews" data-i18n="nav.reviews">Reviews &amp; Ratings</a></li>
+          <li><a href="dashboard.html" data-i18n="nav.dashboard">My Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.contact">Contact Information</h3>
+        <ul class="footer-contact">
+          <li><span>Email:</span> <a href="mailto:hello@yatrasphere.example">hello@yatrasphere.example</a></li>
+          <li><span>Phone:</span> <a href="tel:+911140000192">+91 11 4000 0192</a></li>
+          <li><span>Studio:</span> Connaught Place, New Delhi, India</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-heading" data-i18n="footer.connect">Connect &amp; Legal</h3>
+        <ul class="footer-links legal-links">
+          <li><button type="button" class="footer-link-btn" data-legal="privacy" data-i18n="footer.privacy">Privacy Policy</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="terms" data-i18n="footer.terms">Terms of Use</button></li>
+          <li><button type="button" class="footer-link-btn" data-legal="demo" data-i18n="footer.demo">Demo Data Notice</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span id="current-year">2026</span> <span data-i18n="footer.rights">Yatra Sphere. All rights reserved.</span></p>
+      <p class="footer-note">Guides &amp; Community &middot; Official emergency numbers + clearly labeled demonstration reviews.</p>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal-dialog modal-dialog-wide" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Dialog</h2>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
